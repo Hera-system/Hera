@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+		{% for msg in get_flashed_messages() %}
+        <span style="color: red;">{{ msg }}</span>
+		{% endfor %}
+		<form action="" method="post" novalidate>
+			{{ form.hidden_tag() }}
+		<p>
+            {{ form.data.label }}<br>
+            {{ form.data(placeholder="Введите ваш шаблон") }}<br>
+        </p>
+		<p>{{ form.submit() }}</p>
+		</form>
+{% endblock %}
