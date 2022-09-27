@@ -15,7 +15,7 @@ python3 wsgi.py
 
 # What's done
 
-* Accepts the result from the webhook and enters it into the database
+* Adding webhack results and templates to the database
 * Added models and forms for templates and command execution
 
 ---
