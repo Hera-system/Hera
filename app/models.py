@@ -10,8 +10,8 @@ class CommandExecution(db.Model):
     Stderr = db.Column(db.String)
     Message = db.Column(db.String)
     WebhookURL = db.Column(db.String)
-    TimeExecute = db.Column(db.String)
-    Shebang = db.Column(db.String)
+    TimeExecute = db.Column(db.Integer)
+    FromUser = db.Column(db.String)
     UnixTimeCrt = db.Column(db.String(), default="0", index=True)
     UnixTimeUpd = db.Column(db.String(), default="0", index=True)
 
@@ -26,7 +26,9 @@ class Templates(db.Model):
     Interpreter = db.Column(db.String())
     Trusted = db.Column(db.Boolean(), default=False, index=True)
     StrID = db.Column(db.String(), unique=True)
+    UserCrt = db.Column(db.String())
     DataCrt = db.Column(db.String(), default="0", index=True)
+    UserTrusted = db.Column(db.String())
     DataTrusted = db.Column(db.String(), default="0", index=True)
 
     def __repr__(self):

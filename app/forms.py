@@ -16,6 +16,7 @@ class CommandClass(FlaskForm):
     TimeExecute = IntegerField("Time execute command in seconds", validators=[DataRequired()])
     WebhookURL = StringField("Webhook URL", validators=[DataRequired()])
     CommandID = StringField("CommandID")
+    FromUser = StringField("FromUser")
     HTTPSecret = StringField("HTTPSecret")
     HTTPUser = StringField("HTTPUser")
     HTTPPassword = StringField("HTTPPassword")
@@ -25,7 +26,14 @@ class CommandClass(FlaskForm):
 class TemplateAdded(FlaskForm):
     Command = StringField("Command", validators=[DataRequired()])
     Shebang = StringField("Shebang", validators=[DataRequired()])
+    UserCrt = StringField("UserCrt", validators=[DataRequired()])
     Interpreter = StringField("Interpreter", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+class TemplateTrusted(FlaskForm):
+    TemplateID = IntegerField("TemplateID", validators=[DataRequired()])
+    UserTrust = StringField("UserTrust", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 
