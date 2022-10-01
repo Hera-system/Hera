@@ -1,9 +1,12 @@
 import json
+import os
 import random
 import string
 import requests
 from datetime import datetime
+from datetime import timedelta
 
+from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from flask import render_template, flash, redirect, url_for, request, send_from_directory
 from app.models import *
 from app import app, db, api
@@ -12,6 +15,7 @@ from flask_json import as_json
 from flask_restful import Resource, Api
 
 api_v = "v1"
+AlertaURLAuth = os.getenv("ALERTA_URL")
 
 
 def SendExecuteCommand(command):
@@ -54,53 +58,90 @@ def index():
     return render_template('index.html')
 
 
+def getUser(email):
+    user = Users.query.filter_by(email=email).first()
+    if user is None:
+        user = Users(email=email)
+        db.session.add(user)
+        db.session.commit()
+    return user
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = AlertaLogin()
+    if form.validate():
+        cmd = {"password": form.Password.data, "username": form.Email.data}
+        requestAuth = requests.post(AlertaURLAuth, json=cmd)
+        if requestAuth.status_code == 200:
+            login_user(getUser(form.Email.data), form.RememberMe.data, timedelta(days=7))
+            flash("You are authorized in Hera system!")
+    return render_template('login.html', form=form)
+
+
+@app.route("/checkAuth")
+@login_required
+def checkAuth():
+    if current_user.is_authenticated:
+        return "OK"
+    return "NE OK"
+
+
+@login_required
 @app.route('/trustedTemplate', methods=['GET', 'POST'])
 def TrustedTemplate():
-    form = TemplateTrusted()
-    if form.validate():
-        Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
-        if Template is None:
-            return "Template not found", 404
-        if Template.UserCrt == form.UserTrust.data:
-            return "User created template not permission to trusted this template", 401
-        if Template.Trusted:
-            return f"Template - ID {Template.ID} is trusted."
-        Template.Trusted = True
-        Template.ID = form.TemplateID.data
-        Template.UserTrusted = form.UserTrust.data
-        Template.DataTrusted = datetime.now().timestamp()
-        db.session.commit()
+    if current_user.is_authenticated:
         form = TemplateTrusted()
-        flash("Template trusted")
-    return render_template('trustedTemplate.html', form=form)
+        if form.validate():
+            Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
+            if Template is None:
+                return "Template not found", 404
+            if Template.UserCrt == current_user.email:
+                return "User created template not permission to trusted this template", 401
+            if Template.Trusted:
+                return f"Template - ID {Template.ID} is trusted."
+            Template.Trusted = True
+            Template.ID = form.TemplateID.data
+            Template.UserTrusted = current_user.email
+            Template.DataTrusted = datetime.now().timestamp()
+            db.session.commit()
+            form = TemplateTrusted()
+            flash("Template trusted")
+        return render_template('trustedTemplate.html', form=form)
+    return "You are not authenticated"
 
 
+@login_required
 @app.route('/addedTemplate', methods=['GET', 'POST'])
 def AddedTemplate():
-    form = TemplateAdded()
-    if form.validate_on_submit():
-        # dataCrt = datetime.now().timestamp()
-        form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data, UserCrt=form.UserCrt.data, DataCrt=datetime.now().timestamp())  # Вероятно дату надо будет перенести в дефолт в модели
-        db.session.add(form)
-        db.session.commit()
-        flash(f'Template added! ID - {form.ID}')
+    if current_user.is_authenticated:
         form = TemplateAdded()
-    return render_template('addedTemplate.html', form=form)
+        if form.validate_on_submit():
+            form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data, UserCrt=current_user.email, DataCrt=datetime.now().timestamp())  # Вероятно дату надо будет перенести в дефолт в модели
+            db.session.add(form)
+            db.session.commit()
+            flash(f'Template added! ID - {form.ID}')
+            form = TemplateAdded()
+        return render_template('addedTemplate.html', form=form)
+    return "You are not authenticated"
 
 
+@login_required
 @app.route('/execCommand', methods=['GET', 'POST'])
 def execCommand():
-    form = CommandClass()
-    if form.validate():
-        Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
-        if Template.Trusted:
-            cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=form.FromUser.data, UnixTimeCrt=datetime.now().timestamp(), CmdID=GenerateUniqID(10))
-            db.session.add(cmd)
-            db.session.commit()
-            SendExecuteCommand(cmd)
-            return "OK"
-        return "Template not trusted"
-    return render_template("execcommad.html", form=form)
+    if current_user.is_authenticated:
+        form = CommandClass()
+        if form.validate():
+            Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
+            if Template.Trusted:
+                cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=form.FromUser.data, UnixTimeCrt=datetime.now().timestamp(), CmdID=GenerateUniqID(10))
+                db.session.add(cmd)
+                db.session.commit()
+                SendExecuteCommand(cmd)
+                return "OK"
+            return "Template not trusted"
+        return render_template("execcommad.html", form=form)
+    return "You are not authenticated"
 
 
 class ResultApi(Resource):

@@ -6,17 +6,17 @@
 		<form action="" method="post" novalidate>
 			{{ form.hidden_tag() }}
 		<p>
-            {{ form.Command.label }}<br>
-            {{ form.Command() }}<br>
+            {{ form.Email.label }}<br>
+            {{ form.Email() }}<br>
         </p>
 		<p>
-            {{ form.Shebang.label }}<br>
-            {{ form.Shebang() }}<br>
+            {{ form.Password.label }}<br>
+            {{ form.Password() }}<br>
         </p>
 		<p>
-            {{ form.Interpreter.label }}<br>
-            {{ form.Interpreter() }}<br>
+            {{ form.RememberMe.label }}<br>
+            {{ form.RememberMe() }}<br>
         </p>
-		<p>{{ form.submit() }}</p>
+		<p>{{ form.Submit() }}</p>
 		</form>
 {% endblock %}

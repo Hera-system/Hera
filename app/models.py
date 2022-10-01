@@ -1,4 +1,5 @@
-from app import db
+from app import db, login
+from flask_login import UserMixin
 
 
 class CommandExecution(db.Model):
@@ -33,3 +34,19 @@ class Templates(db.Model):
 
     def __repr__(self):
         return f'<id - {self.ID}.'
+
+
+class Users(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True)
+
+    def __repr__(self):
+        return '<Users {}>'.format(self.username)
+
+    def repr(self):
+        return ''.format(self.username)
+
+
+@login.user_loader
+def load_user(ID):
+    return Users.query.get(int(ID))

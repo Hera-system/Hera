@@ -26,17 +26,17 @@ class CommandClass(FlaskForm):
 class TemplateAdded(FlaskForm):
     Command = StringField("Command", validators=[DataRequired()])
     Shebang = StringField("Shebang", validators=[DataRequired()])
-    UserCrt = StringField("UserCrt", validators=[DataRequired()])
     Interpreter = StringField("Interpreter", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 
 class TemplateTrusted(FlaskForm):
     TemplateID = IntegerField("TemplateID", validators=[DataRequired()])
-    UserTrust = StringField("UserTrust", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 
-class add_post(FlaskForm):
-    post_txt = StringField('Текст поста', validators=[DataRequired()])
-    submit = SubmitField('Отправить')
+class AlertaLogin(FlaskForm):
+    Email = StringField('Email', validators=[DataRequired()])
+    Password = StringField('Password', validators=[DataRequired()])
+    RememberMe = BooleanField('Remember me')
+    Submit = SubmitField('Submit')

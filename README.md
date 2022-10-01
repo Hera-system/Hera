@@ -12,6 +12,10 @@ pip install -r requirements.txt
 ```commandline
 python3 wsgi.py
 ```
+### Export Alerta URL auth
+```bash
+export ALERTA_URL=https://alerta.com/auth/login
+```
 
 ### And pls don't forget create/migrations db
 
