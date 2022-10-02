@@ -79,14 +79,6 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route("/checkAuth")
-@login_required
-def checkAuth():
-    if current_user.is_authenticated:
-        return "OK"
-    return "NE OK"
-
-
 @login_required
 @app.route('/trustedTemplate', methods=['GET', 'POST'])
 def TrustedTemplate():
@@ -95,11 +87,14 @@ def TrustedTemplate():
         if form.validate():
             Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if Template is None:
-                return "Template not found", 404
+                flash("Template not found")
+                return render_template('trustedTemplate.html', form=form), 404
             if Template.UserCrt == current_user.email:
-                return "User created template not permission to trusted this template", 401
+                flash("User created template not permission to trusted this template")
+                return render_template('trustedTemplate.html', form=form), 401
             if Template.Trusted:
-                return f"Template - ID {Template.ID} is trusted."
+                flash(f"Template - ID {Template.ID} is trusted.")
+                return render_template('trustedTemplate.html', form=form), 401
             Template.Trusted = True
             Template.ID = form.TemplateID.data
             Template.UserTrusted = current_user.email
@@ -108,7 +103,8 @@ def TrustedTemplate():
             form = TemplateTrusted()
             flash("Template trusted")
         return render_template('trustedTemplate.html', form=form)
-    return "You are not authenticated"
+    flash("You are not authorized")
+    return redirect(url_for('login'))
 
 
 @login_required
@@ -123,25 +119,28 @@ def AddedTemplate():
             flash(f'Template added! ID - {form.ID}')
             form = TemplateAdded()
         return render_template('addedTemplate.html', form=form)
-    return "You are not authenticated"
+    flash("You are not authorized")
+    return redirect(url_for('login'))
 
 
 @login_required
 @app.route('/execCommand', methods=['GET', 'POST'])
 def execCommand():
     if current_user.is_authenticated:
-        form = CommandClass()
+        form = ExecuteCommand()
         if form.validate():
             Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if Template.Trusted:
-                cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=form.FromUser.data, UnixTimeCrt=datetime.now().timestamp(), CmdID=GenerateUniqID(10))
+                cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=current_user.email, UnixTimeCrt=datetime.now().timestamp(), CmdID=GenerateUniqID(10))
                 db.session.add(cmd)
                 db.session.commit()
                 SendExecuteCommand(cmd)
-                return "OK"
-            return "Template not trusted"
+                flash("Success")
+                return
+            flash("Template not trusted")
         return render_template("execcommad.html", form=form)
-    return "You are not authenticated"
+    flash("You are not authorized")
+    return redirect(url_for('login'))
 
 
 class ResultApi(Resource):

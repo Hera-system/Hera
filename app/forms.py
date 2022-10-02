@@ -1,5 +1,5 @@
 from wtforms.validators import DataRequired
-from wtforms import StringField, SubmitField, IntegerField, BooleanField
+from wtforms import StringField, SubmitField, IntegerField, BooleanField, PasswordField
 from flask_wtf import FlaskForm
 
 
@@ -23,6 +23,13 @@ class CommandClass(FlaskForm):
     submit = SubmitField("Submit")
 
 
+class ExecuteCommand(FlaskForm):
+    WebhookURL = StringField("Webhook URL", validators=[DataRequired()])
+    TemplateID = IntegerField("Template ID", validators=[DataRequired()])
+    TimeExecute = IntegerField("Time execute command in seconds", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
 class TemplateAdded(FlaskForm):
     Command = StringField("Command", validators=[DataRequired()])
     Shebang = StringField("Shebang", validators=[DataRequired()])
@@ -37,6 +44,6 @@ class TemplateTrusted(FlaskForm):
 
 class AlertaLogin(FlaskForm):
     Email = StringField('Email', validators=[DataRequired()])
-    Password = StringField('Password', validators=[DataRequired()])
+    Password = PasswordField('Password', validators=[DataRequired()])
     RememberMe = BooleanField('Remember me')
     Submit = SubmitField('Submit')

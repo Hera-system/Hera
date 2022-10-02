@@ -1,14 +1,12 @@
 {% extends "base.html" %}
-{% block content %}
-		{% for msg in get_flashed_messages() %}
-        <span style="color: red;">{{ msg }}</span>
-		{% endfor %}
-		<form action="" method="post" novalidate>
-			{{ form.hidden_tag() }}
-		<p>
-            {{ form.TemplateID.label }}<br>
-            {{ form.TemplateID() }}<br>
-        </p>
-		<p>{{ form.submit() }}</p>
-		</form>
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+		<h1>Trust template</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    <br>
 {% endblock %}
