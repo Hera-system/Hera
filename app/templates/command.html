@@ -18,7 +18,9 @@
             TemplateID
         </td>
         <td>
-            {{ command.TemplateID }}
+            <a href="{{ url_for('template', id=command.TemplateID) }}">
+                {{ command.TemplateID }}
+            </a>
         </td>
     </tr>
     <tr>
