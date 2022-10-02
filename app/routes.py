@@ -194,6 +194,11 @@ def execCommand():
     return redirect(url_for('login'))
 
 
+@app.route('/favicon.ico')
+def faviconico():
+    return send_from_directory('static/', 'image/favicons/favicon.ico')
+
+
 class ResultApi(Resource):
     def post(self):
         ResponseData = json.loads(request.data.decode("utf-8"))
