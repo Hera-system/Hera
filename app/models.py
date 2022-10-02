@@ -1,5 +1,6 @@
 from app import db, login
 from flask_login import UserMixin
+from datetime import datetime
 
 
 class CommandExecution(db.Model):
@@ -13,8 +14,8 @@ class CommandExecution(db.Model):
     WebhookURL = db.Column(db.String)
     TimeExecute = db.Column(db.Integer)
     FromUser = db.Column(db.String)
-    UnixTimeCrt = db.Column(db.String(), default="0", index=True)
-    UnixTimeUpd = db.Column(db.String(), default="0", index=True)
+    TimeCrt = db.Column(db.DateTime(), default=datetime.now(), index=True)
+    TimeUpd = db.Column(db.DateTime())
 
     def __repr__(self):
         return f'<id - {self.ID}.'
@@ -28,9 +29,9 @@ class Templates(db.Model):
     Trusted = db.Column(db.Boolean(), default=False, index=True)
     StrID = db.Column(db.String(), unique=True)
     UserCrt = db.Column(db.String())
-    DataCrt = db.Column(db.String(), default="0", index=True)
+    DataCrt = db.Column(db.DateTime(), default=datetime.now(), index=True)
     UserTrusted = db.Column(db.String())
-    DataTrusted = db.Column(db.String(), default="0", index=True)
+    DataTrusted = db.Column(db.DateTime())
 
     def __repr__(self):
         return f'<id - {self.ID}.'

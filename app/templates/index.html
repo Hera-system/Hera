@@ -1,19 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-		{% for msg in get_flashed_messages() %}
-        <span style="color: red;">{{ msg }}</span>
-		{% endfor %}
-        <a href="/addedTemplate"><p>First step - added template</p></a>
-        <a href="/trustedTemplate"><p>Next step - trusted template</p></a>
-        <a href="/execCommand"><p>Next step - execute</p></a>
         <p>Next added:</p>
-        <a href="https://github.com/miguelgrinberg/microblog/tree/v0.11"><p>Bootstrap</p></a>
-        <a href="https://habr.com/ru/post/349060/"><p>Bootstrap - HABR</p></a>
-        <p>Page with template list(models - Templates)</p>
-        <p>Page with result for webhook(models - CommandExecution)</p>
         <p>Hide secret variable</p>
         <p>Improve code readability</p>
-        <p>Add CSS and more</p>
         <p>Create a template for errors</p>
         <p>Pack it in docker (statics will probably have to be routed through nginx)</p>
 {% endblock %}

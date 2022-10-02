@@ -1,7 +1,7 @@
 ## Useful stuf
 * https://habr.ru/post/346306/
 
-# Fuck it works. Tested it!
+# It works. Tested it!
 
 ## How to start
 

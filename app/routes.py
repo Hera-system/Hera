@@ -18,6 +18,26 @@ api_v = "v1"
 AlertaURLAuth = os.getenv("ALERTA_URL")
 
 
+def AproofTemplate(id):
+    redirect_to = "template"
+    Template = Templates.query.filter_by(ID=id).first()
+    if Template is None:
+        flash("Template not found")
+        return redirect(url_for(redirect_to, id=id))
+    if Template.UserCrt == current_user.email:
+        flash("User created template not permission to trusted this template")
+        return redirect(url_for(redirect_to, id=id))
+    if Template.Trusted:
+        flash(f"Template - ID {Template.ID} is trusted.")
+        return redirect(url_for(redirect_to, id=id))
+    Template.Trusted = True
+    Template.ID = id
+    Template.UserTrusted = current_user.email
+    Template.DataTrusted = datetime.now()
+    db.session.commit()
+    flash("Template trusted")
+
+
 def SendExecuteCommand(command):
     Token = "VeryStrongString"  # Потом надо спрятать
     URLSecret = "https://raw.githubusercontent.com/Hera-system/TOTP/main/TOTP" # Аналогично, так же придется спрятать переменную и ее значение, верояно в переменные окружения.
@@ -28,8 +48,8 @@ def SendExecuteCommand(command):
         HeaderWebhook = {'Content-type': 'text/plain'}
         requestWebhook = requests.post(command.WebhookURL, json=cmd, headers=HeaderWebhook)
         if requestWebhook.status_code == 200:
-            return True
-    return False
+            return flash("Successful send execute command.")
+    return flash("Error send execute command. Pls check URL")
 
 
 def GenerateUniqID(Lenght: int) -> str:
@@ -67,6 +87,51 @@ def getUser(email):
     return user
 
 
+@app.route('/templates')
+@login_required
+def templates():
+    if current_user.is_authenticated:
+        templates = Templates.query.all()
+        return render_template("templates.html", templates=templates, lenght=15)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+
+@app.route('/commands')
+@login_required
+def commands():
+    if current_user.is_authenticated:
+        commands = CommandExecution.query.all()
+        return render_template("commands.html", commands=commands)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+
+@app.route('/command/<id>')
+@login_required
+def command(id):
+    if current_user.is_authenticated:
+        if id.isdigit():
+            command = CommandExecution.query.filter_by(RowID=int(id)).first()
+            return render_template("command.html", command=command)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+
+@app.route('/template/<id>', methods=['GET', 'POST'])
+@login_required
+def template(id):
+    if current_user.is_authenticated:
+        if id.isdigit():
+            template = Templates.query.filter_by(ID=int(id)).first()
+            form = TrustTemplate()
+            if form.validate():
+                AproofTemplate(id)
+            return render_template("template.html", template=template, form=form)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = AlertaLogin()
@@ -79,41 +144,25 @@ def login():
     return render_template('login.html', form=form)
 
 
-@login_required
 @app.route('/trustedTemplate', methods=['GET', 'POST'])
+@login_required
 def TrustedTemplate():
     if current_user.is_authenticated:
         form = TemplateTrusted()
         if form.validate():
-            Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
-            if Template is None:
-                flash("Template not found")
-                return render_template('trustedTemplate.html', form=form), 404
-            if Template.UserCrt == current_user.email:
-                flash("User created template not permission to trusted this template")
-                return render_template('trustedTemplate.html', form=form), 401
-            if Template.Trusted:
-                flash(f"Template - ID {Template.ID} is trusted.")
-                return render_template('trustedTemplate.html', form=form), 401
-            Template.Trusted = True
-            Template.ID = form.TemplateID.data
-            Template.UserTrusted = current_user.email
-            Template.DataTrusted = datetime.now().timestamp()
-            db.session.commit()
-            form = TemplateTrusted()
-            flash("Template trusted")
+            AproofTemplate(form.TemplateID.data)
         return render_template('trustedTemplate.html', form=form)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
 
-@login_required
 @app.route('/addedTemplate', methods=['GET', 'POST'])
+@login_required
 def AddedTemplate():
     if current_user.is_authenticated:
         form = TemplateAdded()
         if form.validate_on_submit():
-            form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data, UserCrt=current_user.email, DataCrt=datetime.now().timestamp())  # Вероятно дату надо будет перенести в дефолт в модели
+            form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data, UserCrt=current_user.email)
             db.session.add(form)
             db.session.commit()
             flash(f'Template added! ID - {form.ID}')
@@ -123,21 +172,23 @@ def AddedTemplate():
     return redirect(url_for('login'))
 
 
-@login_required
 @app.route('/execCommand', methods=['GET', 'POST'])
+@login_required
 def execCommand():
     if current_user.is_authenticated:
         form = ExecuteCommand()
         if form.validate():
             Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
-            if Template.Trusted:
-                cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=current_user.email, UnixTimeCrt=datetime.now().timestamp(), CmdID=GenerateUniqID(10))
-                db.session.add(cmd)
-                db.session.commit()
-                SendExecuteCommand(cmd)
-                flash("Success")
-                return
-            flash("Template not trusted")
+            if not (Template is None):
+                if Template.Trusted:
+                    cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=current_user.email, CmdID=GenerateUniqID(10))
+                    db.session.add(cmd)
+                    db.session.commit()
+                    SendExecuteCommand(cmd)
+                    return render_template("execcommad.html", form=form)
+                flash("Template not trusted")
+            else:
+                flash("Template not found")
         return render_template("execcommad.html", form=form)
     flash("You are not authorized")
     return redirect(url_for('login'))
@@ -152,7 +203,8 @@ class ResultApi(Resource):
         RespData.Stderr = ResponseData["Stderr"]
         RespData.CmdID = ResponseData["ID"]
         RespData.Message = ResponseData["Message"]
-        db.session.commit()  # https://stackoverflow.com/questions/6699360/flask-sqlalchemy-update-a-rows-information
+        RespData.TimeUpd = datetime.now()
+        db.session.commit()
         return {'message': 'OK'}
 
 
@@ -164,6 +216,11 @@ class InfoApi(Resource):
 
 api.add_resource(ResultApi, f'/api/{api_v}/result')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
 
 
 if __name__ == "__main__":

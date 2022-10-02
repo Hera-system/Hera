@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content %}
+<h1>Command</h1>
+<table class="table table-striped">
+    <tr>
+        <td>
+            RowID
+        </td>
+        <td>
+            {{ command.RowID }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            TemplateID
+        </td>
+        <td>
+            {{ command.TemplateID }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            CmdID
+        </td>
+        <td>
+            {{ command.CmdID }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Error
+        </td>
+        <td>
+            {{ command.Error }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Stderr
+        </td>
+        <td>
+            {{ command.Stderr }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Message
+        </td>
+        <td>
+            {{ command.Message }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            WebhookURL
+        </td>
+        <td>
+            {{ command.WebhookURL }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            TimeExecute
+        </td>
+        <td>
+            {{ command.TimeExecute }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            FromUser
+        </td>
+        <td>
+            {{ command.FromUser }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            UnixTimeCrt
+        </td>
+        <td>
+            {{ command.TimeCrt }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            UnixTimeUpd
+        </td>
+        <td>
+            {{ command.TimeUpd }}
+        </td>
+    </tr>
+</table>
+<h2>Input</h2>
+<pre>
+    {{ command.Stdout }}
+</pre>
+{% endblock %}

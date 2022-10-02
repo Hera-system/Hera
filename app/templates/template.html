@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content %}
+<h1>Template</h1>
+<table class="table table-striped">
+    <tr>
+        <td>
+            ID
+        </td>
+        <td>
+            {{ template.ID }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Command
+        </td>
+        <td>
+            {{ template.Command }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Shebang
+        </td>
+        <td>
+            {{ template.Shebang }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Interpreter
+        </td>
+        <td>
+            {{ template.Interpreter }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Trusted
+        </td>
+        <td>
+            {{ template.Trusted }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            StrID
+        </td>
+        <td>
+            {{ template.StrID }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            UserCrt
+        </td>
+        <td>
+            {{ template.UserCrt }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            DataCrt
+        </td>
+        <td>
+            {{ template.DataCrt }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            UserTrusted
+        </td>
+        <td>
+            {{ template.UserTrusted }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            DataTrusted
+        </td>
+        <td>
+            {{ template.DataTrusted }}
+        </td>
+    </tr>
+</table>
+
+{% if not template.Trusted %}
+<div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+</div>
+<br>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<h1>Templates</h1>
+<table class="table table-hover">
+    <tr>
+        <td>
+            ID
+        </td>
+        <td>
+            Shebang
+        </td>
+        <td>
+            Interpreter
+        </td>
+        <td>
+            Command
+        </td>
+        <td>
+            Trusted
+        </td>
+    </tr>
+    {% for template in templates %}
+    <tr>
+        <td>
+            <a href="{{ url_for('template', id=template.ID) }}">
+                {{ template.ID }}
+            </a>
+        </td>
+        <td>
+            {{ template.Shebang[0:lenght] }}...
+        </td>
+        <td>
+            {{ template.Interpreter[0:lenght] }}...
+        </td>
+        <td>
+            {{ template.Command[0:lenght] }}...
+        </td>
+        <td>
+            {{ template.Trusted }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

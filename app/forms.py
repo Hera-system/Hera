@@ -47,3 +47,7 @@ class AlertaLogin(FlaskForm):
     Password = PasswordField('Password', validators=[DataRequired()])
     RememberMe = BooleanField('Remember me')
     Submit = SubmitField('Submit')
+
+
+class TrustTemplate(FlaskForm):
+    submit = SubmitField("Trust")

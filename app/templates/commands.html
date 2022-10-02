@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<h1>Commands</h1>
+<table class="table table-hover">
+    <tr>
+        <td>
+            RowID
+        </td>
+        <td>
+            TemplateID
+        </td>
+        <td>
+            Data Update
+        </td>
+    </tr>
+    {% for command in commands %}
+    <tr>
+        <td>
+            <a href="{{ url_for('command', id=command.RowID) }}">
+                {{ command.RowID }}
+            </a>
+        </td>
+        <td>
+            <a href="{{ url_for('template', id=command.TemplateID) }}">
+                {{ command.TemplateID }}
+            </a>
+        </td>
+        <td>
+                {{ command.TimeUpd }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
