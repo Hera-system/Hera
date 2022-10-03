@@ -10,7 +10,6 @@
 ```bash
 $ git clone https://github.com/Hera-system/Hera.git
 $ cd Hera
-$ sudo docker build -t hera .
 $ sudo docker-compose up
 ```
 
