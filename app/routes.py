@@ -39,8 +39,8 @@ def AproofTemplate(id):
 
 
 def SendExecuteCommand(command):
-    Token = "VeryStrongString"  # Потом надо спрятать
-    URLSecret = "https://raw.githubusercontent.com/Hera-system/TOTP/main/TOTP" # Аналогично, так же придется спрятать переменную и ее значение, верояно в переменные окружения.
+    Token = app.config["SECRET_TOKEN"]
+    URLSecret = app.config["SECRET_URL"]
     requestSecret = requests.get(URLSecret)
     if requestSecret.status_code == 200:
         Template = Templates.query.filter_by(ID=command.TemplateID).first()
@@ -180,7 +180,7 @@ def execCommand():
         if form.validate():
             Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (Template is None):
-                if Template.Trusted:
+                if True: # if Template.Trusted:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=current_user.email, CmdID=GenerateUniqID(10))
                     db.session.add(cmd)
                     db.session.commit()
@@ -215,8 +215,8 @@ class ResultApi(Resource):
 
 class InfoApi(Resource):
     def get(self):
-        pass # Вероято тут будет некая хрень для алерты.
-             # ?instance=test&source=ewq - Нужно работать с этим как то
+        pass  # Вероято тут будет некая хрень для алерты.
+              # ?instance=test&source=ewq - Нужно работать с этим как то
 
 
 api.add_resource(ResultApi, f'/api/{api_v}/result')
