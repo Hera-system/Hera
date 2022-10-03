@@ -3,12 +3,12 @@ version: '3.1'
 
 services:
   site:
-    image: oldtyt/hera:v0.0.5
+    image: hera
     depends_on:
       - db
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/hera
-      - ALERTA_URL=https://alerta.io/auth/login
+      - ALERTA_URL=https://alerta.osshelp.io/auth/login
       - PORT=9997
     ports:
       - 9997:9997

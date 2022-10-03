@@ -4,6 +4,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
     WTF_CSRF_ENABLED = True
+    SECRET_URL = os.environ.get('SECRET_URL') or 'https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret'
+    SECRET_TOKEN = os.environ.get('SECRET_TOKEN') or 'VeryStrongString'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SQLALCHEMY_MIGRATE_REPO = "db"
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
