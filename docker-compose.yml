@@ -3,7 +3,7 @@ version: '3.1'
 
 services:
   site:
-    image: oldtyt/hera:v0.0.4
+    image: oldtyt/hera:v0.0.5
     depends_on:
       - db
     environment:

@@ -33,7 +33,3 @@ python3 db_create.py
 # What's done
 
 * Progress list view in endpoint `/index`
-
----
-
-###### Sorry for my code.
