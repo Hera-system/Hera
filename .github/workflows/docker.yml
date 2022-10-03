@@ -23,7 +23,7 @@ jobs:
       run: docker build . --file Dockerfile --tag hera/test:${{github.ref_name}}
 
     - name: Added Docker tag
-      run: docker tag hera/test:${{github.ref_name}}) $DOCKER_USER/test:${{github.ref_name}}
+      run: docker tag hera/test:${{github.ref_name}} ${{secrets.DOCKER_USER}}/test:${{github.ref_name}}
 
     - name: Docker Push
       run: docker push ${{secrets.DOCKER_USER}}/test:${{github.ref_name}}
