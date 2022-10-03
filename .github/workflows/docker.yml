@@ -23,5 +23,8 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag hera/test:$(date +%s)
 
+    - name: Added Docker tag
+      run: docker tag hera/test:$(date +%s) $DOCKER_USER/test:alpha
+
     - name: Docker Push
-      run: docker push ${{secrets.DOCKER_USER}}/hera
+      run: docker push ${{secrets.DOCKER_USER}}/test:$(date +%s)
