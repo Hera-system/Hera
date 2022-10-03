@@ -1,33 +1,31 @@
-## Useful stuf
-* https://habr.ru/post/346306/
-
 # It works. Tested it!
 
 ## How to start
+
+___
+
+#### Install [Alerta](https://github.com/alerta/alerta) and follow next steps
+
+---
 
 ### Docker
 
 ```bash
 $ git clone https://github.com/Hera-system/Hera.git
 $ cd Hera
+$ nano docker-compose.yml  # Edit ALERTA_URL to your address
 $ sudo docker-compose up
 ```
 
+---
+
 ### Native
 
-```commandline
-pip install -r requirements.txt
-python3 wsgi.py
-```
-### Export Alerta URL auth
 ```bash
-export ALERTA_URL=https://alerta.com/auth/login
-```
-
-### And pls don't forget create/migrations db
-
-```commandline
-python3 db_create.py
+$ pip install -r requirements.txt
+$ export ALERTA_URL=https://alerta.com/auth/login  # URL to auth endpoint your Alerta
+$ python3 db_create.py
+$ python3 wsgi.py
 ```
 
 # What's done
