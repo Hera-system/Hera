@@ -15,7 +15,6 @@ from flask_json import as_json
 from flask_restful import Resource, Api
 
 api_v = "v1"
-AlertaURLAuth = os.getenv("ALERTA_URL")
 
 
 def AproofTemplate(id):
@@ -137,10 +136,11 @@ def login():
     form = AlertaLogin()
     if form.validate():
         cmd = {"password": form.Password.data, "username": form.Email.data}
-        requestAuth = requests.post(AlertaURLAuth, json=cmd)
+        requestAuth = requests.post(app.config["ALERTA_URL"], json=cmd)
         if requestAuth.status_code == 200:
             login_user(getUser(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
+            return redirect(url_for('templates'))
     return render_template('login.html', form=form)
 
 
