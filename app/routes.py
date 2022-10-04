@@ -180,7 +180,7 @@ def execCommand():
         if form.validate():
             Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (Template is None):
-                if True: # if Template.Trusted:
+                if Template.Trusted:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=current_user.email, CmdID=GenerateUniqID(10))
                     db.session.add(cmd)
                     db.session.commit()
