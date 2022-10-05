@@ -1,74 +1,74 @@
 import json
-import os
 import random
 import string
 import requests
-from datetime import datetime
 from datetime import timedelta
 
-from flask_login import login_user, logout_user, current_user, login_required, LoginManager
+from flask_login import login_user, current_user, login_required
 from flask import render_template, flash, redirect, url_for, request, send_from_directory
+from flask_restful import Resource
+
 from app.models import *
 from app import app, db, api
 from app.forms import *
-from flask_json import as_json
-from flask_restful import Resource, Api
 
 api_v = "v1"
 
 
-def AproofTemplate(id):
+def confirm_template(template_id):
     redirect_to = "template"
-    Template = Templates.query.filter_by(ID=id).first()
-    if Template is None:
+    template_curr = Templates.query.filter_by(ID=template_id).first()
+    if template_curr is None:
         flash("Template not found")
-        return redirect(url_for(redirect_to, id=id))
-    if Template.UserCrt == current_user.email:
+        return redirect(url_for(redirect_to, id=template_id))
+    if template_curr.UserCrt == current_user.email:
         flash("User created template not permission to trusted this template")
-        return redirect(url_for(redirect_to, id=id))
-    if Template.Trusted:
-        flash(f"Template - ID {Template.ID} is trusted.")
-        return redirect(url_for(redirect_to, id=id))
-    Template.Trusted = True
-    Template.ID = id
-    Template.UserTrusted = current_user.email
-    Template.DataTrusted = datetime.now()
+        return redirect(url_for(redirect_to, id=template_id))
+    if template_curr.Trusted:
+        flash(f"Template - ID {template_curr.ID} is trusted.")
+        return redirect(url_for(redirect_to, id=template_id))
+    template_curr.Trusted = True
+    template_curr.ID = template_id
+    template_curr.UserTrusted = current_user.email
+    template_curr.DataTrusted = datetime.now()
     db.session.commit()
     flash("Template trusted")
 
 
-def SendExecuteCommand(command):
-    Token = app.config["SECRET_TOKEN"]
-    URLSecret = app.config["SECRET_URL"]
-    requestSecret = requests.get(URLSecret)
-    if requestSecret.status_code == 200:
-        Template = Templates.query.filter_by(ID=command.TemplateID).first()
-        cmd = {"ExecCommand": Template.Command, "Shebang": Template.Shebang, "Interpreter": Template.Interpreter, "Token": Token, "TimeExec": command.TimeExecute, "ID": command.CmdID, "HTTPSecret": requestSecret.text}
-        HeaderWebhook = {'Content-type': 'text/plain'}
-        requestWebhook = requests.post(command.WebhookURL, json=cmd, headers=HeaderWebhook)
-        if requestWebhook.status_code == 200:
+def send_exec_cmd(data_exec):
+    token = app.config["SECRET_TOKEN"]
+    url_secret = app.config["SECRET_URL"]
+    request_secret = requests.get(url_secret)
+    if request_secret.status_code == 200:
+        template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
+        cmd = {"ExecCommand": template_exec.Command, "Shebang": template_exec.Shebang,
+               "Interpreter": template_exec.Interpreter, "Token": token, "TimeExec": data_exec.TimeExecute,
+               "ID": data_exec.CmdID, "HTTPSecret": request_secret.text}
+        headers = {'Content-type': 'text/plain'}
+        request_webhook = requests.post(data_exec.WebhookURL, json=cmd, headers=headers)
+        if request_webhook.status_code == 200:
             return flash("Successful send execute command.")
     return flash("Error send execute command. Pls check URL")
 
 
-def GenerateUniqID(Lenght: int) -> str:
-    RndString = ""
-    RndList = ['ascii_lowercase', 'ascii_uppercase', 'digits']
+def gen_uniq_id(lenght: int) -> str:
+    rnd_string = ""
+    rnd_list = ['ascii_lowercase', 'ascii_uppercase', 'digits']
     ascii_lowercase = list(string.ascii_lowercase)
     ascii_uppercase = list(string.ascii_uppercase)
     digits = list(string.digits)
-    for i in range(Lenght):
-        RndChoice = random.choices(RndList, k=1)[0]
-        if RndChoice == "ascii_lowercase":
-            RndString = RndString + random.choices(ascii_lowercase, k=1)[0]
-        if RndChoice == "ascii_uppercase":
-            RndString = RndString + random.choices(ascii_uppercase, k=1)[0]
-        if RndChoice == "digits":
-            RndString = RndString + random.choices(digits, k=1)[0]
-    CheckQuery = CommandExecution.query.filter_by(CmdID=RndString).first()
-    if CheckQuery is None:
-        return RndString
-    return GenerateUniqID(Lenght)
+    for i in range(lenght):
+        rnd_choice = random.choices(rnd_list, k=1)[0]
+        if rnd_choice == "ascii_lowercase":
+            rnd_string = rnd_string + random.choices(ascii_lowercase, k=1)[0]
+        if rnd_choice == "ascii_uppercase":
+            rnd_string = rnd_string + random.choices(ascii_uppercase, k=1)[0]
+        if rnd_choice == "digits":
+            rnd_string = rnd_string + random.choices(digits, k=1)[0]
+    check_query = CommandExecution.query.filter_by(CmdID=rnd_string).first()
+    if check_query is None:
+        return rnd_string
+    return gen_uniq_id(lenght)
 
 
 @app.route('/')
@@ -77,7 +77,7 @@ def index():
     return render_template('index.html')
 
 
-def getUser(email):
+def get_user(email):
     user = Users.query.filter_by(email=email).first()
     if user is None:
         user = Users(email=email)
@@ -90,8 +90,8 @@ def getUser(email):
 @login_required
 def templates():
     if current_user.is_authenticated:
-        templates = Templates.query.all()
-        return render_template("templates.html", templates=templates, lenght=15)
+        template_all = Templates.query.all()
+        return render_template("templates.html", templates=template_all, lenght=15)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -100,33 +100,33 @@ def templates():
 @login_required
 def commands():
     if current_user.is_authenticated:
-        commands = CommandExecution.query.all()
-        return render_template("commands.html", commands=commands)
+        command_exec = CommandExecution.query.all()
+        return render_template("commands.html", commands=command_exec)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
 
 @app.route('/command/<id>')
 @login_required
-def command(id):
+def command(template_id):
     if current_user.is_authenticated:
-        if id.isdigit():
-            command = CommandExecution.query.filter_by(RowID=int(id)).first()
-            return render_template("command.html", command=command)
+        if template_id.isdigit():
+            command_exec = CommandExecution.query.filter_by(RowID=int(template_id)).first()
+            return render_template("command.html", command=command_exec)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
 
 @app.route('/template/<id>', methods=['GET', 'POST'])
 @login_required
-def template(id):
+def template(template_id):
     if current_user.is_authenticated:
-        if id.isdigit():
-            template = Templates.query.filter_by(ID=int(id)).first()
+        if template_id.isdigit():
+            template_curr = Templates.query.filter_by(ID=int(template_id)).first()
             form = TrustTemplate()
-            if form.validate():
-                AproofTemplate(id)
-            return render_template("template.html", template=template, form=form)
+            if form.validate_on_submit():
+                confirm_template(template_id)
+            return render_template("template.html", template=template_curr, form=form)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -134,35 +134,40 @@ def template(id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = AlertaLogin()
-    if form.validate():
+    if form.validate_on_submit():
+        if form.Email.data == app.config['SU_USER'] and form.Password.data == app.config['SU_PASS']:
+            login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
+            flash("You are authorized in Hera system!")
+            return redirect(url_for('templates'))
         cmd = {"password": form.Password.data, "username": form.Email.data}
-        requestAuth = requests.post(app.config["ALERTA_URL"], json=cmd)
-        if requestAuth.status_code == 200:
-            login_user(getUser(form.Email.data), form.RememberMe.data, timedelta(days=7))
+        request_auth = requests.post(app.config["ALERTA_URL"], json=cmd)
+        if request_auth.status_code == 200:
+            login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
             return redirect(url_for('templates'))
     return render_template('login.html', form=form)
 
 
-@app.route('/trustedTemplate', methods=['GET', 'POST'])
+@app.route('/confirmTemplate', methods=['GET', 'POST'])
 @login_required
-def TrustedTemplate():
+def confirm_templates():
     if current_user.is_authenticated:
         form = TemplateTrusted()
-        if form.validate():
-            AproofTemplate(form.TemplateID.data)
+        if form.validate_on_submit():
+            confirm_template(form.TemplateID.data)
         return render_template('trustedTemplate.html', form=form)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
 
-@app.route('/addedTemplate', methods=['GET', 'POST'])
+@app.route('/addTemplate', methods=['GET', 'POST'])
 @login_required
-def AddedTemplate():
+def add_template():
     if current_user.is_authenticated:
         form = TemplateAdded()
         if form.validate_on_submit():
-            form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data, UserCrt=current_user.email)
+            form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data,
+                             UserCrt=current_user.email)
             db.session.add(form)
             db.session.commit()
             flash(f'Template added! ID - {form.ID}')
@@ -174,17 +179,19 @@ def AddedTemplate():
 
 @app.route('/execCommand', methods=['GET', 'POST'])
 @login_required
-def execCommand():
+def exec_command():
     if current_user.is_authenticated:
         form = ExecuteCommand()
-        if form.validate():
-            Template = Templates.query.filter_by(ID=form.TemplateID.data).first()
-            if not (Template is None):
-                if Template.Trusted:
-                    cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data, TimeExecute=form.TimeExecute.data,  FromUser=current_user.email, CmdID=GenerateUniqID(10))
+        if form.validate_on_submit():
+            template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
+            if not (template_exec is None):
+                if template_exec.Trusted or current_user.email == app.config['SU_USER']:
+                    cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data,
+                                           TimeExecute=form.TimeExecute.data, FromUser=current_user.email,
+                                           CmdID=gen_uniq_id(10))
                     db.session.add(cmd)
                     db.session.commit()
-                    SendExecuteCommand(cmd)
+                    send_exec_cmd(cmd)
                     return render_template("execcommad.html", form=form)
                 flash("Template not trusted")
             else:
@@ -195,20 +202,20 @@ def execCommand():
 
 
 @app.route('/favicon.ico')
-def faviconico():
+def favicon():
     return send_from_directory('static/', 'image/favicons/favicon.ico')
 
 
 class ResultApi(Resource):
     def post(self):
-        ResponseData = json.loads(request.data.decode("utf-8"))
-        RespData = CommandExecution.query.filter_by(CmdID=ResponseData["ID"]).first()
-        RespData.Error = ResponseData["Error"]
-        RespData.Stdout = ResponseData["Stdout"]
-        RespData.Stderr = ResponseData["Stderr"]
-        RespData.CmdID = ResponseData["ID"]
-        RespData.Message = ResponseData["Message"]
-        RespData.TimeUpd = datetime.now()
+        response_data = json.loads(request.data.decode("utf-8"))
+        resp_data = CommandExecution.query.filter_by(CmdID=response_data["ID"]).first()
+        resp_data.Error = response_data["Error"]
+        resp_data.Stdout = response_data["Stdout"]
+        resp_data.Stderr = response_data["Stderr"]
+        resp_data.CmdID = response_data["ID"]
+        resp_data.Message = response_data["Message"]
+        resp_data.TimeUpd = datetime.now()
         db.session.commit()
         return {'message': 'OK'}
 
@@ -216,7 +223,7 @@ class ResultApi(Resource):
 class InfoApi(Resource):
     def get(self):
         pass  # Вероято тут будет некая хрень для алерты.
-              # ?instance=test&source=ewq - Нужно работать с этим как то
+        # ?instance=test&source=ewq - Нужно работать с этим как то
 
 
 api.add_resource(ResultApi, f'/api/{api_v}/result')

@@ -3,14 +3,6 @@ from wtforms import StringField, SubmitField, IntegerField, BooleanField, Passwo
 from flask_wtf import FlaskForm
 
 
-# class ResponseData(FlaskForm):
-#     Error = BooleanField('Error')
-#     Stdout = StringField('Stdout')
-#     Stderr = StringField('Stderr')
-#     ID = StringField('ID')
-#     Token = StringField('Token')
-#     Message = StringField('Message')
-
 class CommandClass(FlaskForm):
     TemplateID = IntegerField("Template ID", validators=[DataRequired()])
     TimeExecute = IntegerField("Time execute command in seconds", validators=[DataRequired()])

@@ -5,6 +5,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config(object):
     WTF_CSRF_ENABLED = True
     ALERTA_URL = os.getenv("ALERTA_URL")
+    SU_USER = os.getenv("ADMIN_USERNAME")
+    SU_PASS = os.getenv("ADMIN_PASSWORD")
     SECRET_URL = os.environ.get('SECRET_URL') or 'https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret'
     SECRET_TOKEN = os.environ.get('SECRET_TOKEN') or 'VeryStrongString'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
@@ -16,4 +18,3 @@ class Config(object):
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_ADD_STATUS = False
-    #STATIC_FOLDER = '/app/static'

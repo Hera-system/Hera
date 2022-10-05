@@ -8,6 +8,9 @@ ARG SECRET_URL=https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTT
 ARG SECRET_TOKEN=VeryStrongString
 ARG HTTPUser=User
 ARG HTTPassword=Password
+ARG ADMIN_USERNAME=admin
+ARG ADMIN_PASSWORD=password
+ARG SECRET_KEY=you-will-never-guess
 
 EXPOSE $PORT
 
@@ -19,7 +22,11 @@ ENV ALERTA_URL=$ALERTA_URL\
     DATABASE_URL=$DATABASE_URL \
     SECRET_URL=$SECRET_URL \
     SECRET_TOKEN=$SECRET_TOKEN \
-    HTTPUser=$
+    HTTPUser=$HTTPUser \
+    HTTPassword=$HTTPassword \
+    ADMIN_USERNAME=$ADMIN_USERNAME \
+    ADMIN_PASSWORD=$ADMIN_PASSWORD \
+    SECRET_KEY=$SECRET_KEY
 
 
 WORKDIR /app
