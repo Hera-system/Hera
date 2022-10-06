@@ -1,4 +1,4 @@
-# It works. Tested it!
+# Hera
 
 ## How to start
 
@@ -28,6 +28,17 @@ $ python3 db_create.py
 $ python3 wsgi.py
 ```
 
-# What's done
+---
 
-* Progress list view in endpoint `/index`
+## What is it
+
+This is a server management system. It works only after installing the [Webhook](https://github.com/Hera-system/webhook) on your server.
+
+## How it works
+
+1. You are login in [Hera](https://github.com/Hera-system/Hera) using password and email from [alerta](https://github.com/alerta/alerta).
+2. Create template on endpoint `/addTemplate`.
+3. Confirm template from other account on endpoint `/confirmTemplate` or skip for admin.
+4. Send execute template to webhook from endpoint `/execCommand`.
+5. Wait until execute command.
+6. View result on endpoint `/commands`.
