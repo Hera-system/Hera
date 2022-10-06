@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   site:
-    image: oldtyt/hera:v0.0.12
+    image: ghcr.io/hera-system/hera:latest
     depends_on:
       - db
     environment:
