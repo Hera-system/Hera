@@ -1,4 +1,4 @@
-name: Docker Image CI(DockerHUB)
+name: Docker Image CI
 
 on:
   release:
@@ -6,12 +6,13 @@ on:
       - created
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME: oldtyt/hera
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@2
     - name: docker login
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
@@ -19,13 +20,8 @@ jobs:
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image
-      run: >-
-        docker build
-        -t $IMAGE_NAME
-        -t $IMAGE_NAME:$(cat VERSION)
-        -t $IMAGE_NAME:${{ steps.vars.outputs.SHORT_COMMIT_ID }}
-        -t $IMAGE_NAME:${{github.ref_name}}
-        -t $IMAGE_NAME:latest .
+      run: docker build . --file Dockerfile --tag hera/test:${{github.ref_name}}
+
     - name: Added Docker tag
       run: docker tag hera/test:${{github.ref_name}} ${{secrets.DOCKER_USER}}/hera:${{github.ref_name}}
 
