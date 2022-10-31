@@ -106,7 +106,7 @@ def commands():
     return redirect(url_for('login'))
 
 
-@app.route('/command/<id>')
+@app.route('/command/<template_id>')
 @login_required
 def command(template_id):
     if current_user.is_authenticated:
@@ -117,7 +117,7 @@ def command(template_id):
     return redirect(url_for('login'))
 
 
-@app.route('/template/<id>', methods=['GET', 'POST'])
+@app.route('/template/<template_id>', methods=['GET', 'POST'])
 @login_required
 def template(template_id):
     if current_user.is_authenticated:

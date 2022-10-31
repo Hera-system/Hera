@@ -24,7 +24,7 @@
     {% for template in templates %}
     <tr>
         <td>
-            <a href="{{ url_for('template', id=template.ID) }}">
+            <a href="{{ url_for('template', template_id=template.ID) }}">
                 {{ template.ID }}
             </a>
         </td>
@@ -32,7 +32,7 @@
             {{ template.Shebang[0:lenght] }}...
         </td>
         <td>
-            {{ template.Interpreter[0:lenght] }}...
+            {{ template.Interpreter[0:lenght] }}...s
         </td>
         <td>
             {{ template.Command[0:lenght] }}...
