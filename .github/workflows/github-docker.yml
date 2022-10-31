@@ -3,7 +3,6 @@ name: Docker Image CI(GitHub)
 
 on:
   push:
-    branches: [ master, release/* ]
     tags: [ '**' ]
   release:
     types:
