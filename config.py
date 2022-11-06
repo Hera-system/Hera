@@ -14,13 +14,9 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SQLALCHEMY_MIGRATE_REPO = "db"
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    if SQLALCHEMY_DATABASE_URI and \
-            SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
-        SQLALCHEMY_DATABASE_URI = \
-            SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
-    if (SQLALCHEMY_DATABASE_URI is None) or \
-            (SQLALCHEMY_DATABASE_URI == "sqlite"):
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
-                                  os.path.join(basedir, 'app.db')
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
+    if (SQLALCHEMY_DATABASE_URI is None) or (SQLALCHEMY_DATABASE_URI == "sqlite"):
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_ADD_STATUS = False

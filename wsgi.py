@@ -1,4 +1,4 @@
-from app import *
+from app import *  # noqa: F403
 
 if __name__ == "__main__":
-    app.run()
+    app.run()  # noqa: F405

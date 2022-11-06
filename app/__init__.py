@@ -13,6 +13,6 @@ login.login_message = "Please logging to view this page."
 api = Api(app)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-from app import routes, models
+from app import routes, models  # noqa: F401,E402
 migrate = Migrate(app, db)
 login.login_view = 'login'
