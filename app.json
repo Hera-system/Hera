@@ -10,11 +10,6 @@
   "scripts": {
     "postdeploy": "python db_create.py"
   },
-  "buildpacks": [
-    {
-      "url": "heroku/python"
-    }
-  ],
   "addons": [
     "heroku-postgresql"
   ],
@@ -53,6 +48,10 @@
     },"SECRET_KEY": {
       "description":"SECRET_KEY",
       "value": "you-will-never-guess"
+    },
+    "DATABASE_URL": {
+      "description":"DATABASE_URL don't edit this params to use SQLite.",
+      "value": "sqlite"
     }
   }
 }
