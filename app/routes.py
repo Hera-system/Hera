@@ -2,15 +2,18 @@ import json
 import random
 import string
 import requests
+import datetime
 from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
-from flask import render_template, flash, redirect, url_for, request, send_from_directory
+from flask import render_template, flash, redirect, url_for, request,\
+    send_from_directory
 from flask_restful import Resource
 
-from app.models import *
+from app.models import CommandExecution, Templates, Users
 from app import app, db, api
-from app.forms import *
+from app.forms import ExecuteCommand, TemplateAdded,\
+    TemplateTrusted, AlertaLogin, TrustTemplate
 
 api_v = "v1"
 
@@ -41,9 +44,15 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        cmd = {"ExecCommand": template_exec.Command, "Shebang": template_exec.Shebang,
-               "Interpreter": template_exec.Interpreter, "Token": token, "TimeExec": data_exec.TimeExecute,
-               "ID": data_exec.CmdID, "HTTPSecret": request_secret.text}
+        cmd = {
+               "ExecCommand": template_exec.Command,
+               "Shebang": template_exec.Shebang,
+               "Interpreter": template_exec.Interpreter,
+               "Token": token,
+               "TimeExec": data_exec.TimeExecute,
+               "ID": data_exec.CmdID,
+               "HTTPSecret": request_secret.text
+        }
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, json=cmd, headers=headers)
         if request_webhook.status_code == 200:
@@ -166,7 +175,9 @@ def add_template():
     if current_user.is_authenticated:
         form = TemplateAdded()
         if form.validate_on_submit():
-            form = Templates(Command=form.Command.data, Shebang=form.Shebang.data, Interpreter=form.Interpreter.data,
+            form = Templates(Command=form.Command.data,
+                             Shebang=form.Shebang.data,
+                             Interpreter=form.Interpreter.data,
                              UserCrt=current_user.email)
             db.session.add(form)
             db.session.commit()
@@ -186,8 +197,10 @@ def exec_command():
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-                    cmd = CommandExecution(TemplateID=form.TemplateID.data, WebhookURL=form.WebhookURL.data,
-                                           TimeExecute=form.TimeExecute.data, FromUser=current_user.email,
+                    cmd = CommandExecution(TemplateID=form.TemplateID.data,
+                                           WebhookURL=form.WebhookURL.data,
+                                           TimeExecute=form.TimeExecute.data,
+                                           FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
                     db.session.add(cmd)
                     db.session.commit()
