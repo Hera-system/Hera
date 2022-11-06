@@ -1,9 +1,9 @@
 #!flask/bin/python
 from config import Config
-#print(Config.SQLALCHEMY_MIGRATE_REPO)
+# print(Config.SQLALCHEMY_MIGRATE_REPO)
 from migrate.versioning import api
-#from config import SQLALCHEMY_DATABASE_URI
-#from config import SQLALCHEMY_MIGRATE_REPO
+# from config import SQLALCHEMY_DATABASE_URI
+# from config import SQLALCHEMY_MIGRATE_REPO
 from app import db
 import os.path
 
