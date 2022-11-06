@@ -1,0 +1,58 @@
+{
+  "name": "Hera-system",
+  "description": "Hera-system management servers",
+  "keywords": [
+    "flask",
+    "python",
+    "devops"
+  ],
+  "repository": "https://github.com/Hera-system/Hera",
+  "scripts": {
+    "postdeploy": "python db_create.py"
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "env": {
+    "ALERTA_URL": {
+      "description":"ALERTA URL",
+      "value": "https://alerta.io/auth/login"
+    },
+    "CURRENT_ENV": {
+      "description":"CURRENT ENV",
+      "value": "production"
+    },
+    "SECRET_URL": {
+      "description":"SECRET_URL",
+      "value": "https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret"
+    },
+    "SECRET_TOKEN": {
+      "description":"SECRET_TOKEN",
+      "value": "VeryStrongString"
+    },
+    "HTTPUser": {
+      "description":"HTTPUser",
+      "value": "User"
+    },
+    "HTTPassword": {
+      "description":"HTTPassword",
+      "value": "production"
+    },
+    "ADMIN_USERNAME": {
+      "description":"ADMIN_USERNAME",
+      "value": "admin"
+    },
+    "ADMIN_PASSWORD": {
+      "description":"ADMIN_PASSWORD",
+      "value": "password"
+    },"SECRET_KEY": {
+      "description":"SECRET_KEY",
+      "value": "you-will-never-guess"
+    }
+  }
+}

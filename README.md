@@ -1,5 +1,9 @@
 # Hera
 
+Ready to run on Heroku.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?template=https://github.com/Hera-system/Hera)
+
 ## How to start
 
 ___
