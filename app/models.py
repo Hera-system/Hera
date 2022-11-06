@@ -45,7 +45,7 @@ class Users(db.Model, UserMixin):
         return '<Users {}>'.format(self.username)
 
     def repr(self):
-        return ''.format(self.username)
+        return self.username
 
 
 @login.user_loader
