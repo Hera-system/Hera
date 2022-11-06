@@ -10,8 +10,10 @@
   "scripts": {
     "postdeploy": "python db_create.py"
   },
-  "addons": [
-    "heroku-postgresql"
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
   ],
   "env": {
     "ALERTA_URL": {
