@@ -1,6 +1,6 @@
 # Hera
 
-Ready to run on Heroku. [Demo](https://hera-system.herokuapp.com)
+Ready to run on Heroku. [Demo](https://hera-system.oldtyt.xyz)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?template=https://github.com/Hera-system/Hera)
 
