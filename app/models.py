@@ -23,7 +23,6 @@ class CommandExecution(db.Model):
 
 class WebhookConnect(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String)
     webhook_hostname = db.Column(db.String)
     webhook_username = db.Column(db.String)
     webhook_version = db.Column(db.String)
