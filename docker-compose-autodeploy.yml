@@ -12,6 +12,8 @@ services:
       - PORT=9997
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=password
+      - FLASK_DEBUG=1
+      - DEBUG=True
     ports:
       - 9997:9997
     restart: always

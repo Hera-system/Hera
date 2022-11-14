@@ -6,6 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config(object):
     default_secret_url = 'https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret'
     WTF_CSRF_ENABLED = True
+    DEBUG = os.getenv("DEBUG")
     ALERTA_URL = os.getenv("ALERTA_URL")
     SU_USER = os.getenv("ADMIN_USERNAME")
     SU_PASS = os.getenv("ADMIN_PASSWORD")

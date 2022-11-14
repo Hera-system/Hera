@@ -11,11 +11,15 @@ ARG HTTPassword=Password
 ARG ADMIN_USERNAME=admin
 ARG ADMIN_PASSWORD=password
 ARG SECRET_KEY=you-will-never-guess
+ARG FLASK_DEBUG=0
+ARG DEBUG=False
 
 EXPOSE $PORT
 
 ENV ALERTA_URL=$ALERTA_URL\
     PATH="/home/hera/.local/bin:${PATH}" \
+    FLASK_DEBUG=$FLASK_DEBUG \
+    DEBUG=$DEBUG \
     FLASK_APP=app \
     FLASK_ENV=$CURRENT_ENV \
     PORT=$PORT \
