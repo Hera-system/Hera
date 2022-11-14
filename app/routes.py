@@ -3,6 +3,7 @@ import random
 import string
 import requests
 import datetime
+import subprocess
 from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
@@ -80,10 +81,14 @@ def gen_uniq_id(lenght: int) -> str:
     return gen_uniq_id(lenght)
 
 
+def get_git_revision_short_hash() -> str:
+    return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
+
+
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', git_revision=get_git_revision_short_hash())
 
 
 def get_user(email):

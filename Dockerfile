@@ -37,7 +37,7 @@ WORKDIR /app
 
 RUN adduser --disabled-password hera && \
     chown -R hera:hera /app && \
-    apk --no-cache add gcc g++ musl-dev curl
+    apk --no-cache add gcc g++ musl-dev curl git
 
 
 COPY --chown=hera:hera . .
