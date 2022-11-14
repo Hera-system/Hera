@@ -21,6 +21,17 @@ class CommandExecution(db.Model):
         return f'<id - {self.ID}.'
 
 
+class WebhookConnect(db.Model):
+    ID = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String)
+    webhook_hostname = db.Column(db.String)
+    webhook_username = db.Column(db.String)
+    webhook_version = db.Column(db.String)
+    webhook_uniq_name = db.Column(db.String)
+    webhook_cmd_url = db.Column(db.String)
+    time_connect = db.Column(db.DateTime(), default=datetime.now(), index=True)
+
+
 class Templates(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
     Command = db.Column(db.String())

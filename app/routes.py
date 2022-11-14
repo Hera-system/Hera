@@ -6,13 +6,13 @@ import datetime
 from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
-from flask import render_template, flash, redirect, url_for, request,\
+from flask import render_template, flash, redirect, url_for, request, \
     send_from_directory
 from flask_restful import Resource
 
-from app.models import CommandExecution, Templates, Users
+from app.models import CommandExecution, Templates, Users, WebhookConnect
 from app import app, db, api
-from app.forms import ExecuteCommand, TemplateAdded,\
+from app.forms import ExecuteCommand, TemplateAdded, \
     TemplateTrusted, AlertaLogin, TrustTemplate
 
 api_v = "v1"
@@ -45,13 +45,13 @@ def send_exec_cmd(data_exec):
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
         cmd = {
-               "ExecCommand": template_exec.Command,
-               "Shebang": template_exec.Shebang,
-               "Interpreter": template_exec.Interpreter,
-               "Token": token,
-               "TimeExec": data_exec.TimeExecute,
-               "ID": data_exec.CmdID,
-               "HTTPSecret": request_secret.text
+            "ExecCommand": template_exec.Command,
+            "Shebang": template_exec.Shebang,
+            "Interpreter": template_exec.Interpreter,
+            "Token": token,
+            "TimeExec": data_exec.TimeExecute,
+            "ID": data_exec.CmdID,
+            "HTTPSecret": request_secret.text
         }
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, json=cmd, headers=headers)
@@ -233,6 +233,30 @@ class ResultApi(Resource):
         return {'message': 'OK'}
 
 
+class ConnectWebhook(Resource):
+    def post(self):
+        response_data = json.loads(request.data.decode("utf-8"))
+        resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
+        if not (resp_data is None):
+            resp_data.ip = request.remote_addr
+            resp_data.webhook_hostname = response_data["hostname"]
+            resp_data.webhook_username = response_data["username"]
+            resp_data.webhook_version = response_data["webhook_vers"]
+            resp_data.webhook_cmd_url = response_data["webhook_cmd_url"]
+            resp_data.webhook_uniq_name = response_data["webhook_uniq_name"]
+            db.session.commit()
+            return {'message': 'OK'}
+        connect = WebhookConnect(ip=request.remote_addr,
+                                 webhook_hostname=response_data["hostname"],
+                                 webhook_username=response_data["username"],
+                                 webhook_version=response_data["webhook_vers"],
+                                 webhook_cmd_url=response_data["webhook_cmd_url"],
+                                 webhook_uniq_name=response_data["webhook_uniq_name"])
+        db.session.add(connect)
+        db.session.commit()
+        return {'message': 'OK'}
+
+
 class InfoApi(Resource):
     def get(self):
         pass  # Вероято тут будет некая хрень для алерты.
@@ -240,6 +264,7 @@ class InfoApi(Resource):
 
 
 api.add_resource(ResultApi, f'/api/{api_v}/result')
+api.add_resource(ConnectWebhook, f'/api/{api_v}/result/connect')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
 
 
