@@ -46,4 +46,6 @@ USER hera
 
 RUN pip install -r requirements.txt
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD nc -z 127.0.0.1 $PORT
+
 ENTRYPOINT python3 db_create.py || python3 db_migrate.py && gunicorn -b 0.0.0.0:$PORT 'wsgi:app'

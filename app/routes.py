@@ -236,6 +236,7 @@ class ResultApi(Resource):
 class ConnectWebhook(Resource):
     def post(self):
         response_data = json.loads(request.data.decode("utf-8"))
+        print(response_data)
         resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
         if not (resp_data is None):
             resp_data.ip = request.remote_addr
