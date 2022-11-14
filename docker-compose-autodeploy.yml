@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   site:
-    image: hera-system
+    image: hera-system:local
     depends_on:
       - db
     environment:
