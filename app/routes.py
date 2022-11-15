@@ -238,38 +238,36 @@ class ResultApi(Resource):
         return {'message': 'OK'}
 
 
-class ConnectWebhookApi(Resource):
+class ConnectWebhook(Resource):
     def post(self):
-        print("LOL")
+        response_data = json.loads(request.data.decode("utf-8"))
+        resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
+        if not (resp_data is None):
+            resp_data.webhook_hostname = response_data["hostname"]
+            resp_data.webhook_username = response_data["username"]
+            resp_data.webhook_version = response_data["webhook_vers"]
+            resp_data.webhook_cmd_url = response_data["webhook_cmd_url"]
+            resp_data.webhook_uniq_name = response_data["webhook_uniq_name"]
+            db.session.commit()
+            return {'message': 'OK'}
+        connect = WebhookConnect(webhook_hostname=response_data["hostname"],
+                                 webhook_username=response_data["username"],
+                                 webhook_version=response_data["webhook_vers"],
+                                 webhook_cmd_url=response_data["webhook_cmd_url"],
+                                 webhook_uniq_name=response_data["webhook_uniq_name"])
+        db.session.add(connect)
+        db.session.commit()
         return {'message': 'OK'}
-        # response_data = json.loads(request.data.decode("utf-8"))
-        # resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
-        # if not (resp_data is None):
-        #     resp_data.webhook_hostname = response_data["hostname"]
-        #     resp_data.webhook_username = response_data["username"]
-        #     resp_data.webhook_version = response_data["webhook_vers"]
-        #     resp_data.webhook_cmd_url = response_data["webhook_cmd_url"]
-        #     resp_data.webhook_uniq_name = response_data["webhook_uniq_name"]
-        #     db.session.commit()
-        #     return {'message': 'OK'}
-        # connect = WebhookConnect(webhook_hostname=response_data["hostname"],
-        #                          webhook_username=response_data["username"],
-        #                          webhook_version=response_data["webhook_vers"],
-        #                          webhook_cmd_url=response_data["webhook_cmd_url"],
-        #                          webhook_uniq_name=response_data["webhook_uniq_name"])
-        # db.session.add(connect)
-        # db.session.commit()
-        # return {'message': 'OK'}
 
 
 class InfoApi(Resource):
     def get(self):
-        pass  # Вероято тут будет некая хрень для алерты.
-        # ?instance=test&source=ewq - Нужно работать с этим как то
+        pass  # Future alerta integrations this
+        # ?instance=test&source=ewq - example URI
 
 
-api.add_resource(ConnectWebhookApi, f'/api/{api_v}/webhook_connect')
 api.add_resource(ResultApi, f'/api/{api_v}/result')
+api.add_resource(ConnectWebhook, f'/api/{api_v}/result/connect')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
 
 
