@@ -22,7 +22,7 @@ from app.forms import ExecuteCommand, TemplateAdded, \
 api_v = "v1"
 
 
-def confirm_template(template_id):
+async def confirm_template(template_id):
     redirect_to = "template"
     template_curr = Templates.query.filter_by(ID=template_id).first()
     if template_curr is None:
@@ -42,7 +42,7 @@ def confirm_template(template_id):
     flash("Template trusted")
 
 
-def send_exec_cmd(data_exec):
+async def send_exec_cmd(data_exec):
     token = app.config["SECRET_TOKEN"]
     url_secret = app.config["SECRET_URL"]
     request_secret = requests.get(url_secret)
@@ -64,7 +64,7 @@ def send_exec_cmd(data_exec):
     return flash("Error send execute command. Pls check URL")
 
 
-def gen_uniq_id(lenght: int) -> str:
+async def gen_uniq_id(lenght: int) -> str:
     rnd_string = ""
     rnd_list = ['ascii_lowercase', 'ascii_uppercase', 'digits']
     ascii_lowercase = list(string.ascii_lowercase)
@@ -84,17 +84,17 @@ def gen_uniq_id(lenght: int) -> str:
     return gen_uniq_id(lenght)
 
 
-def get_git_revision_short_hash() -> str:
+async def get_git_revision_short_hash() -> str:
     return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
 
 
 @app.route('/')
 @app.route('/index')
-def index():
+async def index():
     return render_template('index.html', git_revision=get_git_revision_short_hash())
 
 
-def get_user(email):
+async def get_user(email):
     user = Users.query.filter_by(email=email).first()
     if user is None:
         user = Users(email=email)
@@ -105,7 +105,7 @@ def get_user(email):
 
 @app.route('/templates')
 @login_required
-def templates():
+async def templates():
     if current_user.is_authenticated:
         template_all = Templates.query.all()
         return render_template("templates.html", templates=template_all, lenght=15)
@@ -115,7 +115,7 @@ def templates():
 
 @app.route('/commands')
 @login_required
-def commands():
+async def commands():
     if current_user.is_authenticated:
         command_exec = CommandExecution.query.all()
         return render_template("commands.html", commands=command_exec)
@@ -125,7 +125,7 @@ def commands():
 
 @app.route('/command/<template_id>')
 @login_required
-def command(template_id):
+async def command(template_id):
     if current_user.is_authenticated:
         if template_id.isdigit():
             command_exec = CommandExecution.query.filter_by(RowID=int(template_id)).first()
@@ -136,7 +136,7 @@ def command(template_id):
 
 @app.route('/template/<template_id>', methods=['GET', 'POST'])
 @login_required
-def template(template_id):
+async def template(template_id):
     if current_user.is_authenticated:
         if template_id.isdigit():
             template_curr = Templates.query.filter_by(ID=int(template_id)).first()
@@ -149,7 +149,7 @@ def template(template_id):
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+async def login():
     form = AlertaLogin()
     if form.validate_on_submit():
         if form.Email.data == app.config['SU_USER'] and form.Password.data == app.config['SU_PASS']:
@@ -167,7 +167,7 @@ def login():
 
 @app.route('/confirmTemplate', methods=['GET', 'POST'])
 @login_required
-def confirm_templates():
+async def confirm_templates():
     if current_user.is_authenticated:
         form = TemplateTrusted()
         if form.validate_on_submit():
@@ -179,7 +179,7 @@ def confirm_templates():
 
 @app.route('/addTemplate', methods=['GET', 'POST'])
 @login_required
-def add_template():
+async def add_template():
     if current_user.is_authenticated:
         form = TemplateAdded()
         if form.validate_on_submit():
@@ -198,7 +198,7 @@ def add_template():
 
 @app.route('/webhooks', methods=['GET', 'POST'])
 @login_required
-def webhooks_route():
+async def webhooks_route():
     if current_user.is_authenticated:
         x = threading.Thread(target=update_status_webhook, args=(30,))
         if not x.is_alive():
@@ -211,7 +211,7 @@ def webhooks_route():
 
 @app.route('/execCmd/<webhook_id>', methods=['GET', 'POST'])
 @login_required
-def exec_command_by_id(webhook_id):
+async def exec_command_by_id(webhook_id):
     if current_user.is_authenticated:
         webhook = WebhookConnect.query.filter_by(uniq_name=webhook_id).first()
         if webhook_id.isdigit() and webhook is None:
@@ -243,7 +243,7 @@ def exec_command_by_id(webhook_id):
 
 @app.route('/execCommand', methods=['GET', 'POST'])
 @login_required
-def exec_command():
+async def exec_command():
     if current_user.is_authenticated:
         form = ExecuteCommand()
         if form.validate_on_submit():
@@ -268,12 +268,12 @@ def exec_command():
 
 
 @app.route('/favicon.ico')
-def favicon():
+async def favicon():
     return send_from_directory('static/', 'image/favicons/favicon.ico')
 
 
 class ResultApi(Resource):
-    def post(self):
+    async def post(self):
         response_data = json.loads(request.data.decode("utf-8"))
         resp_data = CommandExecution.query.filter_by(CmdID=response_data["ID"]).first()
         resp_data.Error = response_data["Error"]
@@ -287,7 +287,7 @@ class ResultApi(Resource):
 
 
 class ConnectWebhook(Resource):
-    def post(self):
+    async def post(self):
         response_data = json.loads(request.data.decode("utf-8"))
         resp_data = WebhookConnect.query.filter_by(uniq_name=response_data["webhook_uniq_name"]).first()
         if not (resp_data is None):
@@ -311,7 +311,7 @@ class ConnectWebhook(Resource):
 
 
 class InfoApi(Resource):
-    def get(self):
+    async def get(self):
         pass  # Future alerta integrations this
         # ?instance=test&source=ewq - example URI
 
