@@ -207,10 +207,9 @@ def webhooks_route():
 @login_required
 def exec_command_by_id(webhook_id):
     if current_user.is_authenticated:
-        webhook = WebhookConnect.query.filter_by(uniq_name=webhook_id)
+        webhook = WebhookConnect.query.filter_by(uniq_name=webhook_id).first()
         if webhook_id.isdigit() and webhook is None:
-            webhook = WebhookConnect.query.filter_by(ID=int(webhook_id))
-        return str(webhook)
+            webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
             flash(f"Error, not found webhook - {webhook_id}")
             return redirect(url_for('exec_command'))
