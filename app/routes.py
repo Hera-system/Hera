@@ -201,7 +201,8 @@ def add_template():
 def webhooks_route():
     if current_user.is_authenticated:
         x = threading.Thread(target=update_status_webhook, args=(30,))
-        x.start()
+        if not x.is_alive():
+            x.start()
         webhooks = WebhookConnect.query.all()
         return render_template("webhooks.html", webhooks=webhooks)
     flash("You are not authorized")
