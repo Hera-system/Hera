@@ -268,7 +268,7 @@ class InfoApi(Resource):
         # ?instance=test&source=ewq - Нужно работать с этим как то
 
 
-api.add_resource(ConnectWebhook, f'/api/{api_v}/result/WebhookConnect')
+api.add_resource(ConnectWebhook, f'/api/{api_v}/WebhookConnect')
 api.add_resource(ResultApi, f'/api/{api_v}/result')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
 
