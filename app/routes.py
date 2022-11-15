@@ -240,24 +240,26 @@ class ResultApi(Resource):
 
 class ConnectWebhook(Resource):
     def post(self):
-        response_data = json.loads(request.data.decode("utf-8"))
-        resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
-        if not (resp_data is None):
-            resp_data.webhook_hostname = response_data["hostname"]
-            resp_data.webhook_username = response_data["username"]
-            resp_data.webhook_version = response_data["webhook_vers"]
-            resp_data.webhook_cmd_url = response_data["webhook_cmd_url"]
-            resp_data.webhook_uniq_name = response_data["webhook_uniq_name"]
-            db.session.commit()
-            return {'message': 'OK'}
-        connect = WebhookConnect(webhook_hostname=response_data["hostname"],
-                                 webhook_username=response_data["username"],
-                                 webhook_version=response_data["webhook_vers"],
-                                 webhook_cmd_url=response_data["webhook_cmd_url"],
-                                 webhook_uniq_name=response_data["webhook_uniq_name"])
-        db.session.add(connect)
-        db.session.commit()
+        print("LOL")
         return {'message': 'OK'}
+        # response_data = json.loads(request.data.decode("utf-8"))
+        # resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
+        # if not (resp_data is None):
+        #     resp_data.webhook_hostname = response_data["hostname"]
+        #     resp_data.webhook_username = response_data["username"]
+        #     resp_data.webhook_version = response_data["webhook_vers"]
+        #     resp_data.webhook_cmd_url = response_data["webhook_cmd_url"]
+        #     resp_data.webhook_uniq_name = response_data["webhook_uniq_name"]
+        #     db.session.commit()
+        #     return {'message': 'OK'}
+        # connect = WebhookConnect(webhook_hostname=response_data["hostname"],
+        #                          webhook_username=response_data["username"],
+        #                          webhook_version=response_data["webhook_vers"],
+        #                          webhook_cmd_url=response_data["webhook_cmd_url"],
+        #                          webhook_uniq_name=response_data["webhook_uniq_name"])
+        # db.session.add(connect)
+        # db.session.commit()
+        # return {'message': 'OK'}
 
 
 class InfoApi(Resource):
