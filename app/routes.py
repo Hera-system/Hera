@@ -209,8 +209,7 @@ def exec_command_by_id(webhook_id):
     if current_user.is_authenticated:
         webhook = WebhookConnect.query.filter_by(uniq_name=webhook_id)
         if webhook_id.isdigit() and webhook is None:
-            webhook_id = int(webhook_id)
-            webhook = WebhookConnect.query.filter_by(ID=webhook_id)
+            webhook = WebhookConnect.query.filter_by(ID=int(webhook_id))
         if webhook is None:
             flash(f"Error, not found webhook - {webhook_id}")
             return redirect(url_for('exec_command'))
@@ -231,6 +230,8 @@ def exec_command_by_id(webhook_id):
                 flash("Template not trusted")
             else:
                 flash("Template not found")
+        print(webhook)
+        print(webhook.ID)
         return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
     flash("You are not authorized")
     return redirect(url_for('login'))
