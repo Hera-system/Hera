@@ -25,6 +25,13 @@ class ExecuteCommand(FlaskForm):
     submit = SubmitField("Submit")
 
 
+class ExecuteCommandWebhook(FlaskForm):
+    TemplateID = IntegerField("Template ID", validators=[DataRequired()])
+    TimeExecute = IntegerField("Time execute command in seconds",
+                               validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
 class TemplateAdded(FlaskForm):
     Command = StringField("Command", validators=[DataRequired()])
     Shebang = StringField("Shebang", validators=[DataRequired()])

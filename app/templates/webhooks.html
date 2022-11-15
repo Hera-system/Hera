@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<h1>Webhooks</h1>
+<table class="table table-hover">
+    <tr>
+        <td>
+            ID
+        </td>
+        <td>
+            Uniq name
+        </td>
+        <td>
+            Hostname
+        </td>
+        <td>
+            Username
+        </td>
+        <td>
+            Last time connect
+        </td>
+    </tr>
+    {% for webhook in webhooks %}
+    <tr>
+        <td>
+            {{ webhook.ID }}
+        </td>
+        <td>
+            {{ webhook.uniq_name}}
+        </td>
+        <td>
+            {{ webhook.hostname }}
+        </td>
+        <td>
+            {{ webhook.username }}
+        </td>
+        <td>
+            {{ webhook.time_connect }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

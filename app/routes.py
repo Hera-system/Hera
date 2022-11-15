@@ -14,7 +14,7 @@ from flask_restful import Resource
 from app.models import CommandExecution, Templates, Users, WebhookConnect
 from app import app, db, api
 from app.forms import ExecuteCommand, TemplateAdded, \
-    TemplateTrusted, AlertaLogin, TrustTemplate
+    TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
 
 api_v = "v1"
 
@@ -193,6 +193,49 @@ def add_template():
     return redirect(url_for('login'))
 
 
+@app.route('/webhooks', methods=['GET', 'POST'])
+@login_required
+def exec_command():
+    if current_user.is_authenticated:
+        webhooks = WebhookConnect.query.all()
+        return render_template("webhooks.html", webhooks=webhooks)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+
+@app.route('/execCmd/<webhook_id>', methods=['GET', 'POST'])
+@login_required
+def exec_command_by_id(webhook_id):
+    if current_user.is_authenticated:
+        webhook = WebhookConnect.query.filter_by(uniq_name=webhook_id)
+        if webhook_id.isdigit() and webhook is None:
+            webhook_id = int(webhook_id)
+            webhook = WebhookConnect.query.filter_by(ID=webhook_id)
+        if webhook is None:
+            flash(f"Error, not found webhook - {webhook_id}")
+            return redirect(url_for('exec_command'))
+        form = ExecuteCommandWebhook()
+        if form.validate_on_submit():
+            template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
+            if not (template_exec is None):
+                if template_exec.Trusted or current_user.email == app.config['SU_USER']:
+                    cmd = CommandExecution(TemplateID=form.TemplateID.data,
+                                           WebhookURL=webhook.cmd_url,
+                                           TimeExecute=form.TimeExecute.data,
+                                           FromUser=current_user.email,
+                                           CmdID=gen_uniq_id(10))
+                    db.session.add(cmd)
+                    db.session.commit()
+                    send_exec_cmd(cmd)
+                    return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
+                flash("Template not trusted")
+            else:
+                flash("Template not found")
+        return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+
 @app.route('/execCommand', methods=['GET', 'POST'])
 @login_required
 def exec_command():
@@ -243,18 +286,18 @@ class ConnectWebhook(Resource):
         response_data = json.loads(request.data.decode("utf-8"))
         resp_data = WebhookConnect.query.filter_by(webhook_uniq_name=response_data["webhook_uniq_name"]).first()
         if not (resp_data is None):
-            resp_data.webhook_hostname = response_data["hostname"]
-            resp_data.webhook_username = response_data["username"]
-            resp_data.webhook_version = response_data["webhook_vers"]
-            resp_data.webhook_cmd_url = response_data["webhook_cmd_url"]
-            resp_data.webhook_uniq_name = response_data["webhook_uniq_name"]
+            resp_data.hostname = response_data["hostname"]
+            resp_data.username = response_data["username"]
+            resp_data.version = response_data["webhook_vers"]
+            resp_data.cmd_url = response_data["webhook_cmd_url"]
+            resp_data.uniq_name = response_data["webhook_uniq_name"]
             db.session.commit()
             return {'message': 'OK'}
-        connect = WebhookConnect(webhook_hostname=response_data["hostname"],
-                                 webhook_username=response_data["username"],
-                                 webhook_version=response_data["webhook_vers"],
-                                 webhook_cmd_url=response_data["webhook_cmd_url"],
-                                 webhook_uniq_name=response_data["webhook_uniq_name"])
+        connect = WebhookConnect(hostname=response_data["hostname"],
+                                 username=response_data["username"],
+                                 version=response_data["webhook_vers"],
+                                 cmd_url=response_data["webhook_cmd_url"],
+                                 uniq_name=response_data["webhook_uniq_name"])
         db.session.add(connect)
         db.session.commit()
         return {'message': 'OK'}
