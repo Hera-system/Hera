@@ -1,8 +1,11 @@
+import time
 import json
 import random
 import string
+import logging
 import requests
 import datetime
+import threading
 import subprocess
 from datetime import timedelta
 
@@ -197,6 +200,8 @@ def add_template():
 @login_required
 def webhooks_route():
     if current_user.is_authenticated:
+        x = threading.Thread(target=update_status_webhook, args=(30,))
+        x.start()
         webhooks = WebhookConnect.query.all()
         return render_template("webhooks.html", webhooks=webhooks)
     flash("You are not authorized")
@@ -318,6 +323,23 @@ api.add_resource(InfoApi, f'/api/{api_v}/info')
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
+
+
+def update_status_webhook(sleep_time):
+    while True:
+        webhooks = WebhookConnect.query.all()
+        for webhook in webhooks:
+            try:
+                if not (webhook is None):
+                    headers = {'Content-type': 'text/plain'}
+                    request_webhook = requests.post(webhook.url+"/healtcheak", headers=headers)
+                    if request_webhook.status_code == 200:
+                        webhook_cur = WebhookConnect.query.filter_by(url=webhook.url).first()
+                        webhook_cur.time_connect = datetime.datetime.now()
+                        db.session.commit()
+            except:
+                logging.error("Error update state webhook")
+        time.sleep(sleep_time)
 
 
 if __name__ == "__main__":
