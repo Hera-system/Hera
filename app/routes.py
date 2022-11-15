@@ -195,7 +195,7 @@ def add_template():
 
 @app.route('/webhooks', methods=['GET', 'POST'])
 @login_required
-def exec_command():
+def webhooks_route():
     if current_user.is_authenticated:
         webhooks = WebhookConnect.query.all()
         return render_template("webhooks.html", webhooks=webhooks)
