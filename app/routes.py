@@ -338,7 +338,7 @@ def update_status_webhook(sleep_time):
                         webhook_cur = WebhookConnect.query.filter_by(url=webhook.url).first()
                         webhook_cur.time_connect = datetime.datetime.now()
                         db.session.commit()
-            except:
+            except:  # E722
                 logging.error("Error update state webhook")
         time.sleep(sleep_time)
 
