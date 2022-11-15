@@ -24,10 +24,14 @@
     {% for webhook in webhooks %}
     <tr>
         <td>
-            {{ webhook.ID }}
+            <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
+                {{ webhook.ID }}
+            </a>
         </td>
         <td>
-            {{ webhook.uniq_name}}
+            <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.uniq_name) }}">
+                {{ webhook.uniq_name}}
+            </a>
         </td>
         <td>
             {{ webhook.hostname }}
