@@ -219,7 +219,7 @@ def exec_command_by_id(webhook_id):
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data,
-                                           WebhookURL=webhook.cmd_url,
+                                           WebhookURL=webhook.url+'/execute',
                                            TimeExecute=form.TimeExecute.data,
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
@@ -230,7 +230,6 @@ def exec_command_by_id(webhook_id):
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        print(webhook)
         return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
     flash("You are not authorized")
     return redirect(url_for('login'))
@@ -286,17 +285,19 @@ class ConnectWebhook(Resource):
         response_data = json.loads(request.data.decode("utf-8"))
         resp_data = WebhookConnect.query.filter_by(uniq_name=response_data["webhook_uniq_name"]).first()
         if not (resp_data is None):
+            if response_data["Token"] != app.config["SECRET_TOKEN"]:
+                return {'message': "Token not valid"}, 401
             resp_data.hostname = response_data["hostname"]
             resp_data.username = response_data["username"]
             resp_data.version = response_data["webhook_vers"]
-            resp_data.cmd_url = response_data["webhook_cmd_url"]
+            resp_data.url = response_data["webhook_url"]
             resp_data.uniq_name = response_data["webhook_uniq_name"]
             db.session.commit()
             return {'message': 'OK'}
         connect = WebhookConnect(hostname=response_data["hostname"],
                                  username=response_data["username"],
                                  version=response_data["webhook_vers"],
-                                 cmd_url=response_data["webhook_cmd_url"],
+                                 url=response_data["webhook_url"],
                                  uniq_name=response_data["webhook_uniq_name"])
         db.session.add(connect)
         db.session.commit()

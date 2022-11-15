@@ -27,7 +27,7 @@ class WebhookConnect(db.Model):
     username = db.Column(db.String)
     version = db.Column(db.String)
     uniq_name = db.Column(db.String)
-    cmd_url = db.Column(db.String)
+    url = db.Column(db.String)
     time_connect = db.Column(db.DateTime(), default=datetime.now(), index=True)
 
 
