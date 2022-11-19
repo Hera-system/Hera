@@ -152,7 +152,7 @@ def login():
             flash("You are authorized in Hera system!")
             return redirect(url_for('templates'))
         auth = AlertaAuth(password=form.Password.data, username=form.Email.data)
-        request_auth = requests.post(app.config["ALERTA_URL"], json=auth)
+        request_auth = requests.post(app.config["ALERTA_URL"], json=auth.json())
         if request_auth.status_code == 200:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
