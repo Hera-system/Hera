@@ -1,6 +1,7 @@
 from app import db, login
 from flask_login import UserMixin
 from datetime import datetime
+from pydantic import BaseModel
 
 
 class CommandExecution(db.Model):
@@ -61,3 +62,40 @@ class Users(db.Model, UserMixin):
 @login.user_loader
 def load_user(ID):
     return Users.query.get(int(ID))
+
+
+class InfoReturnApi(BaseModel):
+    error: bool
+    message: str
+
+
+class InfoWebhook(BaseModel):
+    Token: str
+    hostname: str
+    username: str
+    webhook_vers: str
+    webhook_url: str
+    webhook_uniq_name: str
+
+
+class GettingResult(BaseModel):
+    Error: str
+    Stdout: str
+    Stderr: str
+    ID: str
+    Message: str
+
+
+class ExecutionCommand(BaseModel):
+    ExecCommand: str
+    Shebang: str
+    Interpreter: str
+    Token: str
+    TimeExec: int
+    ID: str
+    HTTPSecret: str
+
+
+class AlertaAuth(BaseModel):
+    password: str
+    username: str

@@ -13,8 +13,10 @@ from flask_login import login_user, current_user, login_required
 from flask import render_template, flash, redirect, url_for, request, \
     send_from_directory
 from flask_restful import Resource
+from flask_pydantic import validate
 
-from app.models import CommandExecution, Templates, Users, WebhookConnect
+from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoWebhook, InfoReturnApi, GettingResult, \
+    ExecutionCommand, AlertaAuth
 from app import app, db, api
 from app.forms import ExecuteCommand, TemplateAdded, \
     TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
@@ -48,15 +50,9 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        cmd = {
-            "ExecCommand": template_exec.Command,
-            "Shebang": template_exec.Shebang,
-            "Interpreter": template_exec.Interpreter,
-            "Token": token,
-            "TimeExec": data_exec.TimeExecute,
-            "ID": data_exec.CmdID,
-            "HTTPSecret": request_secret.text
-        }
+        cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
+                               Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
+                               ID=data_exec.CmdID, HTTPSecret=request_secret.text)
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, json=cmd, headers=headers)
         if request_webhook.status_code == 200:
@@ -156,8 +152,8 @@ def login():
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
             flash("You are authorized in Hera system!")
             return redirect(url_for('templates'))
-        cmd = {"password": form.Password.data, "username": form.Email.data}
-        request_auth = requests.post(app.config["ALERTA_URL"], json=cmd)
+        auth = AlertaAuth(password=form.Password.data, username=form.Email.data)
+        request_auth = requests.post(app.config["ALERTA_URL"], json=auth)
         if request_auth.status_code == 200:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
@@ -273,41 +269,41 @@ def favicon():
 
 
 class ResultApi(Resource):
-    def post(self):
-        response_data = json.loads(request.data.decode("utf-8"))
-        resp_data = CommandExecution.query.filter_by(CmdID=response_data["ID"]).first()
-        resp_data.Error = response_data["Error"]
-        resp_data.Stdout = response_data["Stdout"]
-        resp_data.Stderr = response_data["Stderr"]
-        resp_data.CmdID = response_data["ID"]
-        resp_data.Message = response_data["Message"]
+    @validate()
+    def post(self, body: GettingResult):
+        resp_data = CommandExecution.query.filter_by(CmdID=body.ID).first()
+        resp_data.Error = body.Error
+        resp_data.Stdout = body.Stdout
+        resp_data.Stderr = body.Stderr
+        resp_data.CmdID = body.ID
+        resp_data.Message = body.Message
         resp_data.TimeUpd = datetime.now()
         db.session.commit()
-        return {'message': 'OK'}
+        return InfoReturnApi(error=False, message="Success. The result is received.")
 
 
 class ConnectWebhook(Resource):
-    def post(self):
-        response_data = json.loads(request.data.decode("utf-8"))
-        resp_data = WebhookConnect.query.filter_by(uniq_name=response_data["webhook_uniq_name"]).first()
+    @validate()
+    def post(self, body: InfoWebhook):
+        resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
         if not (resp_data is None):
-            if response_data["Token"] != app.config["SECRET_TOKEN"]:
-                return {'message': "Token not valid"}, 401
-            resp_data.hostname = response_data["hostname"]
-            resp_data.username = response_data["username"]
-            resp_data.version = response_data["webhook_vers"]
-            resp_data.url = response_data["webhook_url"]
-            resp_data.uniq_name = response_data["webhook_uniq_name"]
+            if body.Token != app.config["SECRET_TOKEN"]:
+                return InfoReturnApi(error=True, message="Token not valid"), 401
+            resp_data.hostname = body.hostname
+            resp_data.username = body.username
+            resp_data.version = body.webhook_vers
+            resp_data.url = body.webhook_url
+            resp_data.uniq_name = body.webhook_uniq_name
             db.session.commit()
-            return {'message': 'OK'}
-        connect = WebhookConnect(hostname=response_data["hostname"],
-                                 username=response_data["username"],
-                                 version=response_data["webhook_vers"],
-                                 url=response_data["webhook_url"],
-                                 uniq_name=response_data["webhook_uniq_name"])
+            return InfoReturnApi(error=False, message="Webhook successful connected. Information updated.")
+        connect = WebhookConnect(hostname=body.hostname,
+                                 username=body.username,
+                                 version=body.webhook_vers,
+                                 url=body.webhook_url,
+                                 uniq_name=body.webhook_uniq_name)
         db.session.add(connect)
         db.session.commit()
-        return {'message': 'OK'}
+        return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
 class InfoApi(Resource):
