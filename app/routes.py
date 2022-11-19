@@ -1,5 +1,4 @@
 import time
-import json
 import random
 import string
 import logging
@@ -10,7 +9,7 @@ import subprocess
 from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
-from flask import render_template, flash, redirect, url_for, request, \
+from flask import render_template, flash, redirect, url_for, \
     send_from_directory
 from flask_restful import Resource
 from flask_pydantic import validate
