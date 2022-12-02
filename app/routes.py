@@ -16,7 +16,7 @@ from flask_pydantic import validate
 from pydantic import ValidationError
 
 from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoWebhook, InfoReturnApi, GettingResult, \
-    ExecutionCommand, AlertaAuth
+    ExecutionCommand, AlertaAuth, ResultWebhook
 from app import app, db, api
 from app.forms import ExecuteCommand, TemplateAdded, \
     TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
@@ -281,12 +281,22 @@ def favicon():
 class ResultApi(Resource):
     @validate()
     def post(self, body: GettingResult):
-        resp_data = CommandExecution.query.filter_by(CmdID=body.ID).first()
-        resp_data.Error = body.Error
-        resp_data.Stdout = body.Stdout
-        resp_data.Stderr = body.Stderr
-        resp_data.CmdID = body.ID
-        resp_data.Message = body.Message
+        try:
+            result = ResultWebhook(
+                Error = body.Error,
+                Stdout = body.Stdout,
+                Stderr = body.Stderr,
+                Message = body.Message,
+                ID = body.ID
+            )
+        except ValidationError as e:
+            return e.json()
+        resp_data = CommandExecution.query.filter_by(CmdID=result.ID).first()
+        resp_data.Error = result.Error
+        resp_data.Stdout = result.Stdout
+        resp_data.Stderr = result.Stderr
+        resp_data.CmdID = result.ID
+        resp_data.Message = result.Message
         resp_data.TimeUpd = datetime.datetime.now()
         db.session.commit()
         return InfoReturnApi(error=False, message="Success. The result is received.")
