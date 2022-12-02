@@ -4,26 +4,26 @@
 {% block app_content %}
 <h1>Webhooks</h1>
 <table class="table table-hover">
-    <tr>
-        <th scope="col">
-            ID
+    <thead>
         </th>
-        <th scope="col">
-            Uniq name
-        </th>
-        <th scope="col">
-            Hostname
-        </th>
-        <th scope="col">
-            Username
-        </th>
-        <th scope="col">
-            Active
-        </th>
-        <th scope="col">
-            Exec cmd
-        </th>
-    </tr>
+            <th scope="col">
+                Uniq name
+            </th>
+            <th scope="col">
+                Hostname
+            </th>
+            <th scope="col">
+                Username
+            </th>
+            <th scope="col">
+                Active
+            </th>
+            <th scope="col">
+                Exec cmd
+            </th>
+        </tr>
+    </thead>
+    <tbody>
     {% for webhook in webhooks %}
     {% if webhook.active %}
     <tr class="table-success">
@@ -54,5 +54,6 @@
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
 {% endblock %}
