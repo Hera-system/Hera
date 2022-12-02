@@ -39,7 +39,7 @@ def confirm_template(template_id):
     template_curr.Trusted = True
     template_curr.ID = template_id
     template_curr.UserTrusted = current_user.email
-    template_curr.DataTrusted = datetime.now()
+    template_curr.DataTrusted = datetime.datetime.now()
     db.session.commit()
     flash("Template trusted")
 
@@ -211,6 +211,18 @@ def webhooks_route():
             x.start()
         webhooks = WebhookConnect.query.all()
         return render_template("webhooks.html", webhooks=webhooks)
+    flash("You are not authorized")
+    return redirect(url_for('login'))
+
+@app.route('/webhook/<id>')
+@login_required
+def webhook_info(id):
+    if current_user.is_authenticated:
+        webhook = WebhookConnect.query.filter_by(ID=int(id)).first()
+        if webhook is None:
+            flash(f'Webhook {id} not found!')
+            return redirect(url_for('index'))
+        return render_template("webhook.html", webhook=webhook)
     flash("You are not authorized")
     return redirect(url_for('login'))
 

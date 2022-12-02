@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content %}
+<h1>Webhook info</h1>
+<table class="table table-striped">
+    <tr>
+        <td>
+            ID
+        </td>
+        <td>
+            {{ webhook.ID }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Hostname
+        </td>
+        <td>
+            {{ webhook.hostname }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Username
+        </td>
+        <td>
+            {{ webhook.username }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Version
+        </td>
+        <td>
+            {{ webhook.version }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Uniq name
+        </td>
+        <td>
+            {{ webhook.uniq_name }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            URL
+        </td>
+        <td>
+            {{ webhook.url }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Last time connect
+        </td>
+        <td>
+            {{ webhook.time_connect }}
+        </td>
+    </tr>
+    </table>
+<h2>Input</h2>
+<pre>
+    {{ command.Stdout }}
+</pre>
+{% endblock %}

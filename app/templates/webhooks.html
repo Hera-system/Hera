@@ -20,18 +20,19 @@
         <td>
             Last time connect
         </td>
+        <td>
+            Exec cmd
+        </td>
     </tr>
     {% for webhook in webhooks %}
     <tr>
         <td>
-            <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
+            <a href="{{ url_for('webhook_info', webhook_id=webhook.ID) }}">
                 {{ webhook.ID }}
             </a>
         </td>
         <td>
-            <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.uniq_name) }}">
-                {{ webhook.uniq_name}}
-            </a>
+            {{ webhook.uniq_name}}
         </td>
         <td>
             {{ webhook.hostname }}
@@ -41,6 +42,11 @@
         </td>
         <td>
             {{ webhook.time_connect }}
+        </td>
+        <td>
+            <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
+                Exec cmd
+            </a>
         </td>
     </tr>
     {% endfor %}
