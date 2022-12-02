@@ -1,5 +1,3 @@
-from xmlrpc.client import boolean
-
 from app import db, login
 from flask_login import UserMixin
 from datetime import datetime
@@ -101,6 +99,7 @@ class ExecutionCommand(BaseModel):
 class AlertaAuth(BaseModel):
     password: str
     username: str
+
 
 class ResultWebhook(BaseModel):
     Error: bool

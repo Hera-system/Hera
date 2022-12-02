@@ -214,6 +214,7 @@ def webhooks_route():
     flash("You are not authorized")
     return redirect(url_for('login'))
 
+
 @app.route('/webhook/<id>')
 @login_required
 def webhook_info(id):
@@ -294,13 +295,9 @@ class ResultApi(Resource):
     @validate()
     def post(self, body: GettingResult):
         try:
-            result = ResultWebhook(
-                Error = body.Error,
-                Stdout = body.Stdout,
-                Stderr = body.Stderr,
-                Message = body.Message,
-                ID = body.ID
-            )
+            result = ResultWebhook(Error = body.Error, Stdout = body.Stdout,
+                                   Stderr = body.Stderr, Message = body.Message,
+                                   ID = body.ID)
         except ValidationError as e:
             return e.json()
         resp_data = CommandExecution.query.filter_by(CmdID=result.ID).first()
