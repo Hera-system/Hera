@@ -10,12 +10,14 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             {{ render_nav_item('index', 'Hera') }}
-            {{ render_nav_item('templates', 'Templates') }}
-            {{ render_nav_item('commands', 'Commands') }}
-            {{ render_nav_item('add_template', 'Added templates') }}
-            {{ render_nav_item('confirm_templates', 'Confirm template') }}
-            {{ render_nav_item('exec_command', 'Exec commands') }}
-            {{ render_nav_item('webhooks_route', 'Webhooks') }}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                {{ render_nav_item('templates', 'Templates') }}
+                {{ render_nav_item('commands', 'Commands') }}
+                {{ render_nav_item('add_template', 'Added templates') }}
+                {{ render_nav_item('confirm_templates', 'Confirm template') }}
+                {{ render_nav_item('exec_command', 'Exec commands') }}
+                {{ render_nav_item('webhooks_route', 'Webhooks') }}
+            </div>
         </div>
     </nav>
 
