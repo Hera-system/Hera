@@ -287,7 +287,7 @@ class ResultApi(Resource):
         resp_data.Stderr = body.Stderr
         resp_data.CmdID = body.ID
         resp_data.Message = body.Message
-        resp_data.TimeUpd = datetime.now()
+        resp_data.TimeUpd = datetime.datetime.now()
         db.session.commit()
         return InfoReturnApi(error=False, message="Success. The result is received.")
 
