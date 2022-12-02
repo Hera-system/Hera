@@ -32,7 +32,7 @@ def confirm_template(template_id):
         return redirect(url_for(redirect_to, id=template_id))
     if template_curr.UserCrt == current_user.email:
         flash("User created template not permission to trusted this template")
-        return redirect(url_for(redirect_to, id=template_id))
+        return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.Trusted:
         flash(f"Template - ID {template_curr.ID} is trusted.")
         return redirect(url_for(redirect_to, id=template_id))
