@@ -5,32 +5,32 @@
 <h1>Webhooks</h1>
 <table class="table table-hover">
     <tr>
-        <td>
+        <th scope="col">
             ID
-        </td>
-        <td>
+        </th>
+        <th scope="col">
             Uniq name
-        </td>
-        <td>
+        </th>
+        <th scope="col">
             Hostname
-        </td>
-        <td>
+        </th>
+        <th scope="col">
             Username
-        </td>
-        <td>
+        </th>
+        <th scope="col">
             Active
-        </td>
-        <td>
+        </th>
+        <th scope="col">
             Exec cmd
-        </td>
+        </th>
     </tr>
     {% for webhook in webhooks %}
     <tr>
-        <td>
+        <th scope="row">
             <a href="{{ url_for('webhook_info', webhook_id=webhook.ID) }}">
                 {{ webhook.ID }}
             </a>
-        </td>
+        </th>
         <td>
             {{ webhook.uniq_name}}
         </td>
