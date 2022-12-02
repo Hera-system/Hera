@@ -215,13 +215,13 @@ def webhooks_route():
     return redirect(url_for('login'))
 
 
-@app.route('/webhook/<id>')
+@app.route('/webhook/<webhook_id>')
 @login_required
-def webhook_info(id):
+def webhook_info(webhook_id):
     if current_user.is_authenticated:
-        webhook = WebhookConnect.query.filter_by(ID=int(id)).first()
+        webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
-            flash(f'Webhook {id} not found!')
+            flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
         return render_template("webhook.html", webhook=webhook)
     flash("You are not authorized")
