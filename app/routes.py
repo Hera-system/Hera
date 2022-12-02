@@ -367,11 +367,11 @@ def update_status_webhook(sleep_time):
                     else:
                         webhook.active = False
                     db.session.commit()
-                logging.info(f"Update state - {webhook.url}")
+                logging.info(f"Update state - {webhook.uniq_name}")
             except:  # noqa: E722
                 webhook.active = False
                 db.session.commit()
-                logging.error(f"Error update state webhook - {webhook.url}")
+                logging.error(f"Error update state webhook - {webhook.uniq_name}")
         time.sleep(sleep_time)
 
 
