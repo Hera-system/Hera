@@ -52,7 +52,7 @@ def send_exec_cmd(data_exec):
         print(f"ExecutionCommand - {template_exec.Command} - {type(template_exec.Command)}")
         print(f"Shebang - {template_exec.Shebang} - {type(template_exec.Shebang)}")
         print(f"Interpreter - {template_exec.Interpreter} - {type(template_exec.Interpreter)}")
-        print(f"TimeExec - {data_exec.TimeExec} - {type(data_exec.TimeExec)}")
+        print(f"TimeExec - {data_exec.TimeExecute} - {type(data_exec.TimeExecute)}")
         print(f"ID - {data_exec.CmdID} - {type(data_exec.CmdID)}")
         print(f"HTTPSecret - {request_secret.text} - {type(request_secret.text)}")
         cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
