@@ -195,7 +195,7 @@ def add_template():
                              UserCrt=current_user.email)
             db.session.add(form)
             db.session.commit()
-            db.connection.close()
+            db.session.close()
             flash(f'Template added! ID - {form.ID}')
             form = TemplateAdded()
         return render_template('addedTemplate.html', form=form)
@@ -222,7 +222,7 @@ def webhooks_route():
 def webhook_info(webhook_id):
     if current_user.is_authenticated:
         webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
-        db.connection.close()
+        db.session.close()
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
@@ -240,7 +240,7 @@ def exec_command_by_id(webhook_id):
             webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
             flash(f"Error, not found webhook - {webhook_id}")
-            db.connection.close()
+            db.session.close()
             return redirect(url_for('exec_command'))
         form = ExecuteCommandWebhook()
         if form.validate_on_submit():
@@ -254,16 +254,16 @@ def exec_command_by_id(webhook_id):
                                            CmdID=gen_uniq_id(10))
                     db.session.add(cmd)
                     db.session.commit()
-                    db.connection.close()
+                    db.session.close()
                     send_exec_cmd(cmd)
                     return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        db.connection.close()
+        db.session.close()
         return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
     flash("You are not authorized")
-    db.connection.close()
+    db.session.close()
     return redirect(url_for('login'))
 
 
@@ -284,15 +284,15 @@ def exec_command():
                     db.session.add(cmd)
                     db.session.commit()
                     send_exec_cmd(cmd)
-                    db.connection.close()
+                    db.session.close()
                     return render_template("execcommad.html", form=form)
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        db.connection.close()
+        db.session.close()
         return render_template("execcommad.html", form=form)
     flash("You are not authorized")
-    db.connection.close()
+    db.session.close()
     return redirect(url_for('login'))
 
 
@@ -318,7 +318,7 @@ class ResultApi(Resource):
         resp_data.Message = result.Message
         resp_data.TimeUpd = datetime.datetime.now()
         db.session.commit()
-        db.connection.close()
+        db.session.close()
         return InfoReturnApi(error=False, message="Success. The result is received.")
 
 
@@ -328,7 +328,7 @@ class ConnectWebhook(Resource):
         resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
         if not (resp_data is None):
             if body.Token != app.config["SECRET_TOKEN"]:
-                db.connection.close()
+                db.session.close()
                 return InfoReturnApi(error=True, message="Token not valid"), 401
             resp_data.hostname = body.hostname
             resp_data.username = body.username
@@ -336,7 +336,7 @@ class ConnectWebhook(Resource):
             resp_data.url = body.webhook_url
             resp_data.uniq_name = body.webhook_uniq_name
             db.session.commit()
-            db.connection.close()
+            db.session.close()
             return InfoReturnApi(error=False, message="Webhook successful connected. Information updated.")
         connect = WebhookConnect(hostname=body.hostname,
                                  username=body.username,
@@ -345,7 +345,7 @@ class ConnectWebhook(Resource):
                                  uniq_name=body.webhook_uniq_name)
         db.session.add(connect)
         db.session.commit()
-        db.connection.close()
+        db.session.close()
         return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
@@ -380,12 +380,12 @@ def update_status_webhook(sleep_time):
                     else:
                         webhook.active = False
                     db.session.commit()
-                    db.connection.close()
+                    db.session.close()
                 logging.info(f"Update state - {webhook.uniq_name}")
             except:  # noqa: E722
                 webhook.active = False
                 db.session.commit()
-                db.connection.close()
+                db.session.close()
                 logging.error(f"Error update state webhook - {webhook.uniq_name}")
         time.sleep(sleep_time)
 
