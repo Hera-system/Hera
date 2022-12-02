@@ -25,7 +25,11 @@
         </th>
     </tr>
     {% for webhook in webhooks %}
-    <tr>
+    {% if webhook.active %}
+    <tr class="table-success">
+        {% else %}
+<tr class="table-danger">
+    {% endif %}
         <th scope="row">
             <a href="{{ url_for('webhook_info', webhook_id=webhook.ID) }}">
                 {{ webhook.ID }}
@@ -41,11 +45,6 @@
             {{ webhook.username }}
         </td>
         <td>
-            {% if webhook.active %}
-            <td class="table-success">
-            {% else %}
-                <td class="table-danger">
-            {% endif %}
             {{ webhook.active }}
         </td>
         <td>
