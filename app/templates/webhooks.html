@@ -18,7 +18,7 @@
             Username
         </td>
         <td>
-            Last time connect
+            Active
         </td>
         <td>
             Exec cmd
@@ -41,7 +41,7 @@
             {{ webhook.username }}
         </td>
         <td>
-            {{ webhook.time_connect }}
+            {{ webhook.active }}
         </td>
         <td>
             <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">

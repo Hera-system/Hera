@@ -1,3 +1,5 @@
+from email.policy import default
+
 from app import db, login
 from flask_login import UserMixin
 from datetime import datetime
@@ -30,6 +32,7 @@ class WebhookConnect(db.Model):
     uniq_name = db.Column(db.String)
     url = db.Column(db.String)
     time_connect = db.Column(db.DateTime(), default=datetime.now(), index=True)
+    active = db.Column(db.Boolean, default=True)
 
 
 class Templates(db.Model):

@@ -360,11 +360,14 @@ def update_status_webhook(sleep_time):
                     headers = {'Content-type': 'text/plain'}
                     request_webhook = requests.post(webhook.url+"/healtcheak", headers=headers)
                     if request_webhook.status_code == 200:
-                        webhook_cur = WebhookConnect.query.filter_by(url=webhook.url).first()
-                        webhook_cur.time_connect = datetime.datetime.now()
+                        # webhook_cur = WebhookConnect.query.filter_by(url=webhook.url).first()
+                        webhook.active = True
+                        webhook.time_connect = datetime.datetime.now()
                         db.session.commit()
                 logging.debug(f"Update state - {webhook.url}")
             except:  # noqa: E722
+                webhook.active = False
+                db.session.commit()
                 logging.error(f"Error update state webhook - {webhook.url}")
         time.sleep(sleep_time)
 
