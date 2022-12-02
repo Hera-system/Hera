@@ -49,17 +49,15 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        tmp = ExecutionCommand(ExecCommand=str(template_exec.Command))
-        tmp += ExecutionCommand(Shebang=str(template_exec.Shebang))
-        tmp += ExecutionCommand(Interpreter=str(template_exec.Interpreter))
-        tmp += ExecutionCommand(Token=str(token))
-        tmp += ExecutionCommand(TimeExec=int(data_exec.TimeExecute))
-        tmp += ExecutionCommand(ID=str(data_exec.CmdID))
-        tmp += ExecutionCommand(HTTPSecret=str(request_secret.text))
-        cmd = tmp
-        # cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
-        #                        Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
-        #                        ID=data_exec.CmdID, HTTPSecret=request_secret.text)
+        print(f"ExecutionCommand - {template_exec.Command} - {type(template_exec.Command)}")
+        print(f"Shebang - {template_exec.Shebang} - {type(template_exec.Shebang)}")
+        print(f"Interpreter - {template_exec.Interpreter} - {type(template_exec.Interpreter)}")
+        print(f"TimeExec - {data_exec.TimeExec} - {type(data_exec.TimeExec)}")
+        print(f"ID - {data_exec.CmdID} - {type(data_exec.CmdID)}")
+        print(f"HTTPSecret - {request_secret.text} - {type(request_secret.text)}")
+        cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
+                               Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
+                               ID=data_exec.CmdID, HTTPSecret=request_secret.text)
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
