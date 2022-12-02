@@ -49,12 +49,13 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        print(f"ExecutionCommand - {template_exec.Command} - {type(template_exec.Command)}")
-        print(f"Shebang - {template_exec.Shebang} - {type(template_exec.Shebang)}")
-        print(f"Interpreter - {template_exec.Interpreter} - {type(template_exec.Interpreter)}")
-        print(f"TimeExec - {data_exec.TimeExecute} - {type(data_exec.TimeExecute)}")
-        print(f"ID - {data_exec.CmdID} - {type(data_exec.CmdID)}")
-        print(f"HTTPSecret - {request_secret.text} - {type(request_secret.text)}")
+        out = f"ExecutionCommand - {template_exec.Command} - {type(template_exec.Command)}"
+        out += f"Shebang - {template_exec.Shebang} - {type(template_exec.Shebang)}"
+        out += f"Interpreter - {template_exec.Interpreter} - {type(template_exec.Interpreter)}"
+        out += f"TimeExec - {data_exec.TimeExecute} - {type(data_exec.TimeExecute)}"
+        out += f"ID - {data_exec.CmdID} - {type(data_exec.CmdID)}"
+        out += f"HTTPSecret - {request_secret.text} - {type(request_secret.text)}"
+        return out
         cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
                                Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
                                ID=data_exec.CmdID, HTTPSecret=request_secret.text)
