@@ -49,15 +49,11 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        try:
-            cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
-                                   Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
-                                   ID=data_exec.CmdID, HTTPSecret=request_secret.text)
-            headers = {'Content-type': 'text/plain'}
-            request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
-        except ValueError as e:
-            print(e.json())
-            return e.json()
+        cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
+                               Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
+                               ID=data_exec.CmdID, HTTPSecret=request_secret.text)
+        headers = {'Content-type': 'text/plain'}
+        request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
             return flash("Successful send execute command.")
     return flash("Error send execute command. Pls check URL")
