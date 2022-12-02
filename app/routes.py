@@ -49,9 +49,15 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
-                               Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
-                               ID=data_exec.CmdID, HTTPSecret=request_secret.text)
+        try:
+            cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
+                                   Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
+                                   ID=data_exec.CmdID, HTTPSecret=request_secret.text)
+        except ValueError as e:
+            flash("Invalid syntax. Error:", str(e))
+            print(e)
+            print(e.json())
+            return
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
