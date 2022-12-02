@@ -53,7 +53,7 @@ def send_exec_cmd(data_exec):
                                Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
                                ID=data_exec.CmdID, HTTPSecret=request_secret.text)
         headers = {'Content-type': 'text/plain'}
-        request_webhook = requests.post(data_exec.WebhookURL, json=cmd, headers=headers)
+        request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
             return flash("Successful send execute command.")
     return flash("Error send execute command. Pls check URL")
