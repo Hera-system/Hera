@@ -4,10 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_login import LoginManager
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap5
 
 app = Flask(__name__)
-bootstrap = Bootstrap(app)
+bootstrap = Bootstrap5(app)
 login = LoginManager(app)
 login.login_message = "Please logging to view this page."
 api = Api(app)

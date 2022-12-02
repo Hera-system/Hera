@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% from 'bootstrap5/form.html' import render_form %}
 
 {% block app_content %}
 <h1>Template</h1>
@@ -89,7 +89,7 @@
 {% if not template.Trusted %}
 <div class="row">
         <div class="col-md-4">
-            {{ wtf.quick_form(form) }}
+            {{ render_form(form) }}
         </div>
 </div>
 <br>
