@@ -41,7 +41,7 @@
             {{ webhook.username }}
         </td>
         <td>
-            { % if webhook.active %}
+            {% if webhook.active %}
                 <div class="alert success" role="alert">
             {% else %}
                 <div class="alert alert-danger" role="alert">
