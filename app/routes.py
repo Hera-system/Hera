@@ -49,13 +49,13 @@ def send_exec_cmd(data_exec):
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
-        tmp = ExecutionCommand(ExecCommand=template_exec.Command)
-        tmp += ExecutionCommand(Shebang=template_exec.Shebang)
-        tmp += ExecutionCommand(Interpreter=template_exec.Interpreter)
-        tmp += ExecutionCommand(Token=token)
-        tmp += ExecutionCommand(TimeExec=data_exec.TimeExecute)
-        tmp += ExecutionCommand(ID=data_exec.CmdID)
-        tmp += ExecutionCommand(HTTPSecret=request_secret.text)
+        tmp = ExecutionCommand(ExecCommand=str(template_exec.Command))
+        tmp += ExecutionCommand(Shebang=str(template_exec.Shebang))
+        tmp += ExecutionCommand(Interpreter=str(template_exec.Interpreter))
+        tmp += ExecutionCommand(Token=str(token))
+        tmp += ExecutionCommand(TimeExec=int(data_exec.TimeExecute))
+        tmp += ExecutionCommand(ID=str(data_exec.CmdID))
+        tmp += ExecutionCommand(HTTPSecret=str(request_secret.text))
         cmd = tmp
         # cmd = ExecutionCommand(ExecutionCommand=template_exec.Command, Shebang=template_exec.Shebang,
         #                        Interpreter=template_exec.Interpreter, Token=token, TimeExec=data_exec.TimeExecute,
