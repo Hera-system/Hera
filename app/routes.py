@@ -208,6 +208,7 @@ def webhooks_route():
     if current_user.is_authenticated:
         x = threading.Thread(target=update_status_webhook, args=(30,))
         if not x.is_alive():
+            logging.info("Start webhook thread")
             x.start()
         webhooks = WebhookConnect.query.all()
         return render_template("webhooks.html", webhooks=webhooks)
@@ -364,7 +365,7 @@ def update_status_webhook(sleep_time):
                         webhook.active = True
                         webhook.time_connect = datetime.datetime.now()
                         db.session.commit()
-                logging.debug(f"Update state - {webhook.url}")
+                logging.info(f"Update state - {webhook.url}")
             except:  # noqa: E722
                 webhook.active = False
                 db.session.commit()
