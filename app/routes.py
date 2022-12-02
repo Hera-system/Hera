@@ -62,7 +62,7 @@ def send_exec_cmd(data_exec):
             )
         except ValidationError as e:
             print(e)
-            return flash("Error send execute command. Error: ", e.json())
+            return flash(str(e))
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
