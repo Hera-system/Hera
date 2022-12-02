@@ -52,7 +52,7 @@ def send_exec_cmd(data_exec):
         template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
         try:
             cmd = ExecutionCommand(
-                                   ExecutionCommand=template_exec.Command,
+                                   ExecCommand=template_exec.Command,
                                    Shebang=template_exec.Shebang,
                                    Interpreter=template_exec.Interpreter,
                                    Token=token,
