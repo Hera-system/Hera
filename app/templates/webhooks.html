@@ -41,7 +41,13 @@
             {{ webhook.username }}
         </td>
         <td>
+            { % if webhook.active %}
+                <div class="alert success" role="alert">
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+            {% endif %}
             {{ webhook.active }}
+            </div>
         </td>
         <td>
             <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
