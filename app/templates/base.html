@@ -14,7 +14,7 @@
               Hera
             </a>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
+                <div class="navbar-nav navbar-center">
                     {{ render_nav_item('templates', 'Templates') }}
                     {{ render_nav_item('commands', 'Commands') }}
                     {{ render_nav_item('add_template', 'Added templates') }}
@@ -22,6 +22,11 @@
                     {{ render_nav_item('exec_command', 'Exec commands') }}
                     {{ render_nav_item('webhooks_route', 'Webhooks') }}
                 </div>
+                {% if current_user.email %}
+                    <div class="nav navbar-nav navbar-right">
+                        {{ render_nav_item('index', current_user.email) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </nav>
