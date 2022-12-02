@@ -64,7 +64,7 @@ def send_exec_cmd(data_exec):
             print(e)
             return flash(str(e))
         headers = {'Content-type': 'text/plain'}
-        request_webhook = requests.post(data_exec.WebhookURL, json=cmd.json(), headers=headers)
+        request_webhook = requests.post(data_exec.WebhookURL, body=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
             return flash("Successful send execute command.")
     return flash("Error send execute command.")
