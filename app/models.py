@@ -1,5 +1,3 @@
-from email.policy import default
-
 from app import db, login
 from flask_login import UserMixin
 from datetime import datetime
