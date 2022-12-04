@@ -4,43 +4,47 @@
 {% block app_content %}
 <h1>Templates</h1>
 <table class="table table-hover">
-    <tr>
-        <td>
-            ID
-        </td>
-        <td>
-            Shebang
-        </td>
-        <td>
-            Interpreter
-        </td>
-        <td>
-            Command
-        </td>
-        <td>
-            Trusted
-        </td>
-    </tr>
-    {% for template in templates %}
-    <tr>
-        <td>
-            <a href="{{ url_for('template', template_id=template.ID) }}">
-                {{ template.ID }}
-            </a>
-        </td>
-        <td>
-            {{ template.Shebang[0:lenght] }}...
-        </td>
-        <td>
-            {{ template.Interpreter[0:lenght] }}...s
-        </td>
-        <td>
-            {{ template.Command[0:lenght] }}...
-        </td>
-        <td>
-            {{ template.Trusted }}
-        </td>
-    </tr>
-    {% endfor %}
+    <thead>
+        <tr>
+            <th scope="col">
+                ID
+            </th>
+            <th scope="col">
+                Shebang
+            </th>
+            <th scope="col">
+                Interpreter
+            </th>
+            <th scope="col">
+                Command
+            </th>
+            <th scope="col">
+                Trusted
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for template in templates %}
+        <tr>
+            <td>
+                <a href="{{ url_for('template', template_id=template.ID) }}">
+                    {{ template.ID }}
+                </a>
+            </td>
+            <td>
+                {{ template.Shebang[0:lenght] }}...
+            </td>
+            <td>
+                {{ template.Interpreter[0:lenght] }}...s
+            </td>
+            <td>
+                {{ template.Command[0:lenght] }}...
+            </td>
+            <td>
+                {{ template.Trusted }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock %}

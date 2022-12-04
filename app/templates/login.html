@@ -1,31 +1,12 @@
+{% extends "base.html" %}
 {% from 'bootstrap5/form.html' import render_form %}
-{% from 'bootstrap5/nav.html' import render_nav_item %}
-{% from 'bootstrap5/utils.html' import render_messages %}
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{% if title %}{{ title }} - Hera{% else %}Hera{% endif %}</title>
-    {{ bootstrap.load_css() }}
-</head>
-</body>
-
-        <main class="container">
-            {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
-            <h1>Sign In</h1>
-    <div class="row">
-        <div class="col-md-4">
-            {{ render_form(form) }}
-        </div>
-    </div>
-    <br>
-        </main>
-
-        {{ bootstrap.load_js() }}
-    </body>
-</html>
-
 
 {% block app_content %}
-		
+    <h1>Sign In</h1>
+        <div class="row">
+            <div class="col-md-4">
+                {{ render_form(form) }}
+            </div>
+        </div>
+    <br>
 {% endblock %}

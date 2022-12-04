@@ -6,7 +6,8 @@
     <title>{% if title %}{{ title }} - Hera{% else %}Hera{% endif %}</title>
     {{ bootstrap.load_css() }}
 </head>
-</body>
+<body>
+    
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand flex-fill" href="/index">
@@ -33,11 +34,12 @@
         </div>
     </nav>
 
-        <main class="container">
-            {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
-            {% block app_content %}{% endblock %}
-        </main>
+    <main class="container">
+        {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
+        {% block app_content %}{% endblock %}
+    </main>
 
         {{ bootstrap.load_js() }}
-    </body>
+
+</body>
 </html>

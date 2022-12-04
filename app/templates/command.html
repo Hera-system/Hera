@@ -5,17 +5,17 @@
 <h1>Command</h1>
 <table class="table table-striped">
     <tr>
-        <td>
+        <th scope="row">
             RowID
-        </td>
+        </th>
         <td>
             {{ command.RowID }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             TemplateID
-        </td>
+        </th>
         <td>
             <a href="{{ url_for('template', template_id=command.TemplateID) }}">
                 {{ command.TemplateID }}
@@ -23,73 +23,73 @@
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             CmdID
-        </td>
+        </th>
         <td>
             {{ command.CmdID }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             Error
-        </td>
+        </th>
         <td>
             {{ command.Error }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             Stderr
-        </td>
+        </th>
         <td>
             {{ command.Stderr }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             Message
-        </td>
+        </th>
         <td>
             {{ command.Message }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             WebhookURL
-        </td>
+        </th>
         <td>
             {{ command.WebhookURL }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             TimeExecute
-        </td>
+        </th>
         <td>
             {{ command.TimeExecute }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             FromUser
-        </td>
+        </th>
         <td>
             {{ command.FromUser }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             UnixTimeCrt
-        </td>
+        </th>
         <td>
             {{ command.TimeCrt }}
         </td>
     </tr>
     <tr>
-        <td>
+        <th scope="row">
             UnixTimeUpd
-        </td>
+        </th>
         <td>
             {{ command.TimeUpd }}
         </td>
