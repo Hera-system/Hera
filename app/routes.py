@@ -41,6 +41,7 @@ def confirm_template(template_id):
     template_curr.UserTrusted = current_user.email
     template_curr.DataTrusted = datetime.datetime.now()
     db.session.commit()
+    db.session.close()
     flash("Template trusted")
 
 
@@ -106,6 +107,7 @@ def get_user(email):
         user = Users(email=email)
         db.session.add(user)
         db.session.commit()
+        db.session.close()
     return user
 
 
@@ -196,7 +198,6 @@ def add_template():
             flash(f'Template added! ID - {form.ID}')
             db.session.add(form)
             db.session.commit()
-            db.session.close()
             form = TemplateAdded()
         return render_template('addedTemplate.html', form=form)
     flash("You are not authorized")
@@ -256,16 +257,13 @@ def exec_command_by_id(webhook_id):
                     webhook_uniq_name = webhook.uniq_name
                     db.session.add(cmd)
                     db.session.commit()
-                    db.session.close()
                     return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        db.session.close()
         webhook_uniq_name = webhook.uniq_name
         return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
     flash("You are not authorized")
-    db.session.close()
     return redirect(url_for('login'))
 
 
@@ -285,16 +283,13 @@ def exec_command():
                                            CmdID=gen_uniq_id(10))
                     db.session.add(cmd)
                     db.session.commit()
-                    db.session.close()
                     send_exec_cmd(cmd)
                     return render_template("execcommad.html", form=form)
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        db.session.close()
         return render_template("execcommad.html", form=form)
     flash("You are not authorized")
-    db.session.close()
     return redirect(url_for('login'))
 
 
