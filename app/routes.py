@@ -253,15 +253,17 @@ def exec_command_by_id(webhook_id):
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
                     send_exec_cmd(cmd)
+                    webhook_uniq_name = webhook.uniq_name
                     db.session.add(cmd)
                     db.session.commit()
                     db.session.close()
-                    return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
+                    return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
                 flash("Template not trusted")
             else:
                 flash("Template not found")
         db.session.close()
-        return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
+        webhook_uniq_name = webhook.uniq_name
+        return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
     flash("You are not authorized")
     db.session.close()
     return redirect(url_for('login'))
