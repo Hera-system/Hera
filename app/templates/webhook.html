@@ -5,67 +5,72 @@
 <h1>Webhook info</h1>
 <table class="table table-striped">
     <tr>
-        <td scope="col">
+        <th scope="row">
             ID
-        </td>
+        </th>
         <td>
             {{ webhook.ID }}
         </td>
     </tr>
     <tr>
-        <td scope="col">
+        <th scope="row">
             Hostname
-        </td>
+        </th>
         <td>
             {{ webhook.hostname }}
         </td>
     </tr>
     <tr>
-        <td scope="col">
+        <th scope="row">
             Username
-        </td>
+        </th>
         <td>
             {{ webhook.username }}
         </td>
     </tr>
     <tr>
-        <td scope="col">
+        <th scope="row">
             Version
-        </td>
+        </th>
         <td>
             {{ webhook.version }}
         </td>
     </tr>
     <tr>
-        <td scope="col">
+        <th scope="row">
             Uniq name
-        </td>
+        </th>
         <td>
             {{ webhook.uniq_name }}
         </td>
     </tr>
     <tr>
-        <td scope="col">
+        <th scope="row">
             URL
-        </td>
+        </th>
         <td>
             {{ webhook.url }}
         </td>
     </tr>
     <tr>
-        <td scope="col">
+        <th scope="row">
             Last time connect
-        </td>
+        </th>
         <td>
             {{ webhook.time_connect }}
         </td>
     </tr>
-    <tr>
-        <td scope="col">
+    {% if webhook.active %}
+    <tr class="table-succes">
+    {% else %}
+    <tr class="table-danger">
+    {% endif %}
+        <th scope="row">
             Active status
-        </td>
+        </th>
+        <td>
             {{ webhook.active }}
         </td>
     </tr>
-    </table>
+</table>
 {% endblock %}

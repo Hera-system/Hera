@@ -7,7 +7,7 @@
     {{ bootstrap.load_css() }}
 </head>
 <body>
-    
+
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand flex-fill" href="/index">
@@ -19,8 +19,8 @@
                     {{ render_nav_item('commands', 'Commands') }}
                     {{ render_nav_item('add_template', 'Added templates') }}
                     {{ render_nav_item('confirm_templates', 'Confirm template') }}
-                    {{ render_nav_item('exec_command', 'Exec commands') }}
                     {{ render_nav_item('webhooks_route', 'Webhooks') }}
+                    {{ render_nav_item('exec_command', 'Exec commands') }}
             </div>
             {% if current_user.email %}
                 <div class="navbar-nav text-right flex-fill flex-row-reverse">

@@ -50,8 +50,8 @@
             {{ webhook.active }}
         </td>
         <td>
-            <a href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
-                Exec cmd
+            <a class="btn btn-light btn-sm" href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
+                Run
             </a>
         </td>
     </tr>
