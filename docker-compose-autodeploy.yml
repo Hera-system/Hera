@@ -27,3 +27,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     restart: always
+
+  webhook:
+    depends_on:
+      - site
+    image: hera-webhook:local
+    restart: always
