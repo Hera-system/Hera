@@ -193,9 +193,9 @@ def add_template():
                              Shebang=form.Shebang.data,
                              Interpreter=form.Interpreter.data,
                              UserCrt=current_user.email)
+            flash(f'Template added! ID - {form.ID}')
             db.session.add(form)
             db.session.commit()
-            flash(f'Template added! ID - {form.ID}')
             db.session.close()
             form = TemplateAdded()
         return render_template('addedTemplate.html', form=form)
@@ -252,10 +252,10 @@ def exec_command_by_id(webhook_id):
                                            TimeExecute=form.TimeExecute.data,
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
+                    send_exec_cmd(cmd)
                     db.session.add(cmd)
                     db.session.commit()
                     db.session.close()
-                    send_exec_cmd(cmd)
                     return render_template("execcommad.html", form=form, webhook_name=webhook.uniq_name)
                 flash("Template not trusted")
             else:
