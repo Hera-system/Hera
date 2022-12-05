@@ -30,7 +30,7 @@ def confirm_template(template_id):
     if template_curr is None:
         flash("Template not found")
         return redirect(url_for(redirect_to, id=template_id))
-    if template_curr.UserCrt == current_user.email:
+    if template_curr.UserCrt == current_user.email and template_curr.UserCrt != app.config['SU_USER']:
         flash("User created template not permission to trusted this template")
         return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.Trusted:
@@ -195,9 +195,9 @@ def add_template():
                              Shebang=form.Shebang.data,
                              Interpreter=form.Interpreter.data,
                              UserCrt=current_user.email)
-            flash(f'Template added! ID - {form.ID}')
             db.session.add(form)
             db.session.commit()
+            flash(f'Template added! ID - {form.ID}')
             form = TemplateAdded()
         return render_template('addedTemplate.html', form=form)
     flash("You are not authorized")
@@ -332,6 +332,9 @@ class ConnectWebhook(Resource):
             resp_data.version = body.webhook_vers
             resp_data.url = body.webhook_url
             resp_data.uniq_name = body.webhook_uniq_name
+            resp_data.os_type = body.os_type
+            resp_data.os_arch = body.os_arch
+            resp_data.cpu_core = body.cpu_core
             db.session.commit()
             db.session.close()
             return InfoReturnApi(error=False, message="Webhook successful connected. Information updated.")

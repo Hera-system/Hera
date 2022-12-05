@@ -22,6 +22,30 @@
     </tr>
     <tr>
         <th scope="row">
+            OS Type
+        </th>
+        <td>
+            {{ webhook.os_type }}
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            OS Arch
+        </th>
+        <td>
+            {{ webhook.os_arch }}
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            CPU Core
+        </th>
+        <td>
+            {{ webhook.cpu_core }}
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
             Username
         </th>
         <td>
@@ -61,7 +85,7 @@
         </td>
     </tr>
     {% if webhook.active %}
-    <tr class="table-succes">
+    <tr class="table-success">
     {% else %}
     <tr class="table-danger">
     {% endif %}

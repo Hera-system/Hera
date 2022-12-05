@@ -15,12 +15,12 @@
               Hera
             </a>
             <div class="d-flex justify-content-evenly flex-grow-1" id="navbarNavAltMarkup">
+                    {{ render_nav_item('exec_command', 'Exec commands') }}
                     {{ render_nav_item('templates', 'Templates') }}
-                    {{ render_nav_item('commands', 'Commands') }}
                     {{ render_nav_item('add_template', 'Added templates') }}
                     {{ render_nav_item('confirm_templates', 'Confirm template') }}
+                    {{ render_nav_item('commands', 'Commands') }}
                     {{ render_nav_item('webhooks_route', 'Webhooks') }}
-                    {{ render_nav_item('exec_command', 'Exec commands') }}
             </div>
             {% if current_user.email %}
                 <div class="navbar-nav text-right flex-fill flex-row-reverse">

@@ -29,6 +29,9 @@ class WebhookConnect(db.Model):
     version = db.Column(db.String)
     uniq_name = db.Column(db.String)
     url = db.Column(db.String)
+    os_type = db.Column(db.String)
+    os_arch = db.Column(db.String)
+    cpu_core = db.Column(db.Integer)
     time_connect = db.Column(db.DateTime(), default=datetime.now(), index=True)
     active = db.Column(db.Boolean, default=True)
 
@@ -77,6 +80,9 @@ class InfoWebhook(BaseModel):
     webhook_vers: str
     webhook_url: str
     webhook_uniq_name: str
+    os_type: str
+    os_arch: str
+    cpu_core: int
 
 
 class GettingResult(BaseModel):
