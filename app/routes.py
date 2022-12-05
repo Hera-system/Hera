@@ -107,7 +107,7 @@ def get_user(email):
         user = Users(email=email)
         db.session.add(user)
         db.session.commit()
-        db.session.close()
+        # db.session.close()
     return user
 
 
