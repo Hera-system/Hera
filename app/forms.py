@@ -34,7 +34,6 @@ class ExecuteCommandWebhook(FlaskForm):
 
 class TemplateAdded(FlaskForm):
     Command = StringField("Command", validators=[DataRequired()])
-    Shebang = StringField("Shebang", validators=[DataRequired()])
     Interpreter = StringField("Interpreter", validators=[DataRequired()])
     submit = SubmitField("Submit")
 

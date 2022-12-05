@@ -54,7 +54,6 @@ def send_exec_cmd(data_exec):
         try:
             cmd = ExecutionCommand(
                                    ExecCommand=template_exec.Command,
-                                   Shebang=template_exec.Shebang,
                                    Interpreter=template_exec.Interpreter,
                                    Token=token,
                                    TimeExec=data_exec.TimeExecute,
@@ -192,7 +191,6 @@ def add_template():
         form = TemplateAdded()
         if form.validate_on_submit():
             form = Templates(Command=form.Command.data,
-                             Shebang=form.Shebang.data,
                              Interpreter=form.Interpreter.data,
                              UserCrt=current_user.email)
             db.session.add(form)

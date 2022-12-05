@@ -10,9 +10,6 @@
                 ID
             </th>
             <th scope="col">
-                Shebang
-            </th>
-            <th scope="col">
                 Interpreter
             </th>
             <th scope="col">
@@ -30,9 +27,6 @@
                 <a href="{{ url_for('template', template_id=template.ID) }}">
                     {{ template.ID }}
                 </a>
-            </td>
-            <td>
-                {{ template.Shebang[0:lenght] }}...
             </td>
             <td>
                 {{ template.Interpreter[0:lenght] }}...s

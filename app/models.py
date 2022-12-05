@@ -39,7 +39,6 @@ class WebhookConnect(db.Model):
 class Templates(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
     Command = db.Column(db.String())
-    Shebang = db.Column(db.String())
     Interpreter = db.Column(db.String())
     Trusted = db.Column(db.Boolean(), default=False, index=True)
     StrID = db.Column(db.String(), unique=True)
@@ -95,7 +94,6 @@ class GettingResult(BaseModel):
 
 class ExecutionCommand(BaseModel):
     ExecCommand: str
-    Shebang: str
     Interpreter: str
     Token: str
     TimeExec: int
