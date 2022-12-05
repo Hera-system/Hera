@@ -8,4 +8,4 @@ WORKDIR /app/webhook
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD nc -z 127.0.0.1 7342
 
-ENTRYPOINT ./webhook -conf=hera.config.json
+ENTRYPOINT ./webhook --config=hera.config.json
