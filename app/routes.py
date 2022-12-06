@@ -54,7 +54,7 @@ def send_exec_cmd(data_exec):
         try:
             cmd = ExecutionCommand(
                                    ExecCommand=template_exec.Command,
-                                   TimeExec=template_exec.TimeExecute,
+                                   TimeExec=template_exec.TimeExec,
                                    Interpreter=template_exec.Interpreter,
                                    Token=token,
                                    ID=data_exec.CmdID,
