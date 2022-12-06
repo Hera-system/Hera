@@ -20,8 +20,6 @@ class CommandClass(FlaskForm):
 class ExecuteCommand(FlaskForm):
     WebhookURL = StringField("Webhook URL", validators=[DataRequired()])
     TemplateID = IntegerField("Template ID", validators=[DataRequired()])
-    TimeExecute = IntegerField("Time execute command in seconds",
-                               validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 

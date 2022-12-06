@@ -248,7 +248,6 @@ def exec_command_by_id(webhook_id):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data,
                                            WebhookURL=webhook.url+'/execute',
-                                           TimeExecute=form.TimeExecute.data,
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
                     send_exec_cmd(cmd)
@@ -276,7 +275,7 @@ def exec_command():
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data,
                                            WebhookURL=form.WebhookURL.data,
-                                           TimeExecute=form.TimeExecute.data,
+                                           TimeExecute=template_exec.TimeExec,
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
                     db.session.add(cmd)
