@@ -41,7 +41,6 @@ class Templates(db.Model):
     Command = db.Column(db.String())
     Interpreter = db.Column(db.String())
     Trusted = db.Column(db.Boolean(), default=False, index=True)
-    StrID = db.Column(db.String(), unique=True)
     UserCrt = db.Column(db.String())
     DataCrt = db.Column(db.DateTime(), default=datetime.now(), index=True)
     TimeExec = db.Column(db.Integer)
