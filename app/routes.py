@@ -226,7 +226,8 @@ def webhook_info(webhook_id):
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
-        command = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).all()
+        command = CommandExecution.query.filter_by(WebhookName="Webhook-Hera").all()
+        print(command)
         for cmd in command:
             print(cmd.WebhookName)
         return render_template("webhook.html", webhook=webhook, command=command)
