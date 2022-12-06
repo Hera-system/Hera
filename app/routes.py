@@ -226,7 +226,7 @@ def webhook_info(webhook_id):
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
-        command = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name)
+        command = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).all()
         return render_template("webhook.html", webhook=webhook, command=command)
     flash("You are not authorized")
     return redirect(url_for('login'))
