@@ -22,7 +22,11 @@
     </thead>
     <tbody>
         {% for template in templates %}
-        <tr>
+            {% if template.Trusted %}
+                <tr class="table-success">
+            {% else %}
+                <tr class="table-danger">
+            {% endif %}
             <td>
                 <a href="{{ url_for('template', template_id=template.ID) }}">
                     {{ template.ID }}

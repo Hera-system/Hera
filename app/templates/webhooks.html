@@ -27,11 +27,11 @@
     </thead>
     <tbody>
     {% for webhook in webhooks %}
-    {% if webhook.active %}
-    <tr class="table-success">
+        {% if webhook.active %}
+            <tr class="table-success">
         {% else %}
-<tr class="table-danger">
-    {% endif %}
+            <tr class="table-danger">
+        {% endif %}
         <th scope="row">
             <a href="{{ url_for('webhook_info', webhook_id=webhook.ID) }}">
                 {{ webhook.ID }}

@@ -36,7 +36,11 @@
             {{ template.Interpreter }}
         </td>
     </tr>
-    <tr>
+    {% if template.Trusted %}
+        <tr class="table-success">
+    {% else %}
+        <tr class="table-danger">
+    {% endif %}
         <th scope="row">
             Trusted
         </th>
