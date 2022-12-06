@@ -13,6 +13,7 @@ class CommandExecution(db.Model):
     Stderr = db.Column(db.String)
     Message = db.Column(db.String)
     WebhookURL = db.Column(db.String)
+    WebhookName = db.Column(db.String)
     TimeExecute = db.Column(db.Integer)
     FromUser = db.Column(db.String)
     TimeCrt = db.Column(db.DateTime(), default=datetime.now(), index=True)

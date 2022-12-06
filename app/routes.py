@@ -226,7 +226,8 @@ def webhook_info(webhook_id):
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
-        return render_template("webhook.html", webhook=webhook)
+        command = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name)
+        return render_template("webhook.html", webhook=webhook, command=command)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -249,6 +250,7 @@ def exec_command_by_id(webhook_id):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data,
                                            WebhookURL=webhook.url+'/execute',
+                                           WebhookName=webhook.uniq_name,
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
                     send_exec_cmd(cmd)
