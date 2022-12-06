@@ -20,7 +20,7 @@ class CommandExecution(db.Model):
     TimeUpd = db.Column(db.DateTime())
 
     def __repr__(self):
-        return f'<id - {self.ID}.'
+        return f'<id - {self.RowID}.'
 
 
 class WebhookConnect(db.Model):
