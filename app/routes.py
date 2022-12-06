@@ -192,6 +192,7 @@ def add_template():
         if form.validate_on_submit():
             form = Templates(Command=form.Command.data,
                              Interpreter=form.Interpreter.data,
+                             TimeExec=form.TimeExecute.data,
                              UserCrt=current_user.email)
             db.session.add(form)
             db.session.commit()
