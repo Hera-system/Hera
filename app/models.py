@@ -44,6 +44,7 @@ class Templates(db.Model):
     StrID = db.Column(db.String(), unique=True)
     UserCrt = db.Column(db.String())
     DataCrt = db.Column(db.DateTime(), default=datetime.now(), index=True)
+    TimeExec = db.Column(db.Integer)
     UserTrusted = db.Column(db.String())
     DataTrusted = db.Column(db.DateTime())
 
