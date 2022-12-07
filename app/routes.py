@@ -29,12 +29,15 @@ def confirm_template(template_id):
     template_curr = Templates.query.filter_by(ID=template_id).first()
     if template_curr is None:
         flash("Template not found")
+        db.session.close()
         return redirect(url_for(redirect_to, id=template_id))
     if template_curr.UserCrt == current_user.email and template_curr.UserCrt != app.config['SU_USER']:
         flash("User created template not permission to trusted this template")
+        db.session.close()
         return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.Trusted:
         flash(f"Template - ID {template_curr.ID} is trusted.")
+        db.session.close()
         return redirect(url_for(redirect_to, id=template_id))
     template_curr.Trusted = True
     template_curr.ID = template_id
@@ -62,7 +65,9 @@ def send_exec_cmd(data_exec):
             )
         except ValidationError as e:
             print(e)
+            db.session.close()
             return flash(str(e))
+        db.session.close()
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, data=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
@@ -87,6 +92,7 @@ def gen_uniq_id(lenght: int) -> str:
     check_query = CommandExecution.query.filter_by(CmdID=rnd_string).first()
     if check_query is None:
         return rnd_string
+    db.session.close()
     return gen_uniq_id(lenght)
 
 
