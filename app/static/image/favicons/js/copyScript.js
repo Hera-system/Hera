@@ -6,6 +6,6 @@ copyBtn.onclick = () => {
     navigator.clipboard.writeText(preContent)
     .then(() => {})
     .catch(err => {
-        aletr('Sometrhing went wrong', err)
+        alert('Sometrhing went wrong', err)
     })
 }
