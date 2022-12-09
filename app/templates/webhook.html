@@ -111,6 +111,9 @@
             <th scope="col">
                 Data Update
             </th>
+            <th scope="col">
+                Result
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -133,6 +136,9 @@
             <td>
                     {{ command.TimeUpd }}
             </td>
+            <a class="btn btn-light btn-sm w-50" href="{{ url_for('command', template_id=command.RowID) }}">
+                View
+            </a>
         </tr>
         {% endfor %}
     </tbody>
