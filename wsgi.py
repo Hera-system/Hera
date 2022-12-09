@@ -1,4 +1,4 @@
 from app import *  # noqa: F403
 
 if __name__ == "__main__":
-      app.run()  # noqa: F405
+      app.run()  # noqa: F405, E111, E117

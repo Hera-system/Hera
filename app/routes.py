@@ -29,22 +29,18 @@ def confirm_template(template_id):
     template_curr = Templates.query.filter_by(ID=template_id).first()
     if template_curr is None:
         flash("Template not found")
-        db.session.close()
         return redirect(url_for(redirect_to, id=template_id))
     if template_curr.UserCrt == current_user.email and template_curr.UserCrt != app.config['SU_USER']:
         flash("User created template not permission to trusted this template")
-        db.session.close()
         return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.Trusted:
         flash(f"Template - ID {template_curr.ID} is trusted.")
-        db.session.close()
         return redirect(url_for(redirect_to, id=template_id))
     template_curr.Trusted = True
     template_curr.ID = template_id
     template_curr.UserTrusted = current_user.email
     template_curr.DataTrusted = datetime.datetime.now()
     db.session.commit()
-    db.session.close()
     flash("Template trusted")
 
 
@@ -65,9 +61,7 @@ def send_exec_cmd(data_exec):
             )
         except ValidationError as e:
             print(e)
-            db.session.close()
             return flash(str(e))
-        db.session.close()
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, data=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
@@ -92,7 +86,6 @@ def gen_uniq_id(lenght: int) -> str:
     check_query = CommandExecution.query.filter_by(CmdID=rnd_string).first()
     if check_query is None:
         return rnd_string
-    db.session.close()
     return gen_uniq_id(lenght)
 
 
@@ -112,7 +105,6 @@ def get_user(email):
         user = Users(email=email)
         db.session.add(user)
         db.session.commit()
-        # db.session.close()
     return user
 
 
@@ -228,7 +220,6 @@ def webhooks_route():
 def webhook_info(webhook_id):
     if current_user.is_authenticated:
         webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
-        db.session.close()
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
@@ -247,7 +238,6 @@ def exec_command_by_id(webhook_id):
             webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
             flash(f"Error, not found webhook - {webhook_id}")
-            db.session.close()
             return redirect(url_for('exec_command'))
         form = ExecuteCommandWebhook()
         if form.validate_on_submit():
@@ -321,7 +311,6 @@ class ResultApi(Resource):
         resp_data.Message = result.Message
         resp_data.TimeUpd = datetime.datetime.now()
         db.session.commit()
-        db.session.close()
         return InfoReturnApi(error=False, message="Success. The result is received.")
 
 
@@ -331,7 +320,6 @@ class ConnectWebhook(Resource):
         resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
         if not (resp_data is None):
             if body.Token != app.config["SECRET_TOKEN"]:
-                db.session.close()
                 return InfoReturnApi(error=True, message="Token not valid"), 401
             resp_data.hostname = body.hostname
             resp_data.username = body.username
@@ -342,7 +330,6 @@ class ConnectWebhook(Resource):
             resp_data.os_arch = body.os_arch
             resp_data.cpu_core = body.cpu_core
             db.session.commit()
-            db.session.close()
             return InfoReturnApi(error=False, message="Webhook successful connected. Information updated.")
         connect = WebhookConnect(hostname=body.hostname,
                                  username=body.username,
@@ -354,7 +341,6 @@ class ConnectWebhook(Resource):
                                  uniq_name=body.webhook_uniq_name)
         db.session.add(connect)
         db.session.commit()
-        db.session.close()
         return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
@@ -394,7 +380,6 @@ def update_status_webhook(sleep_time):
                 webhook.active = False
                 db.session.commit()
                 logging.error(f"Error update state webhook - {webhook.uniq_name}")
-        db.session.close()
         time.sleep(sleep_time)
 
 
