@@ -1,6 +1,6 @@
 function CopyStdout() {
   var copyText = document.querySelector('#pre-for-copy').innerHTML;
-  navigator.clipboard.writeText(copyText.value);
+  navigator.clipboard.writeText(copyText);
 
   var tooltip = document.getElementById("myTooltip");
   tooltip.innerHTML = "Copied!";
