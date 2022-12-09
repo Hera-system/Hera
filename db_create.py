@@ -1,5 +1,5 @@
 #!flask/bin/python
-from app import create_app, db
+from app import db, create_app
 
 app = create_app()
 

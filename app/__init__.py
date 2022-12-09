@@ -20,9 +20,9 @@ db.init_app(app)
 from app import routes, models  # noqa: F401,E402
 
 
-# def create_app(config_class=Config):
-#     app = Flask(__name__)
-#     app.config.from_object(Config)
-#     db.init_app(app)
-#     from app import routes, models  # noqa: F401,E402
-#     # return app
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
+    from app import routes, models  # noqa: F401,E402
+    return app
