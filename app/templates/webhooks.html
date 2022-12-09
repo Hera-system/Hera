@@ -18,9 +18,6 @@
                 Username
             </th>
             <th scope="col">
-                Active
-            </th>
-            <th scope="col">
                 Exec cmd
             </th>
         </tr>
@@ -45,9 +42,6 @@
         </td>
         <td>
             {{ webhook.username }}
-        </td>
-        <td>
-            {{ webhook.active }}
         </td>
         <td>
             <a class="btn btn-light btn-sm w-50" href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
