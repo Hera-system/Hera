@@ -130,7 +130,7 @@ def templates():
 @login_required
 def commands():
     if current_user.is_authenticated:
-        command_exec = CommandExecution.query.all()
+        command_exec = reversed(CommandExecution.query.all())
         return render_template("commands.html", commands=command_exec)
     flash("You are not authorized")
     return redirect(url_for('login'))
@@ -232,7 +232,7 @@ def webhook_info(webhook_id):
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
-        commands = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).all()
+        commands = reversed(CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).all())
         return render_template("webhook.html", webhook=webhook, commands=commands)
     flash("You are not authorized")
     return redirect(url_for('login'))
