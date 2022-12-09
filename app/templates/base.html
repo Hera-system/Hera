@@ -15,7 +15,6 @@
               Hera
             </a>
             <div class="d-flex justify-content-evenly flex-grow-1" id="navbarNavAltMarkup">
-                    {{ render_nav_item('exec_command', 'Exec commands') }}
                     <li class="nav-item dropdown" style="list-style-type: none;">
                       <a class="nav-link dropdown-toggle" href="/templates" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Templates
@@ -27,7 +26,16 @@
                         <li><a class="dropdown-item" href="/templates">Templates</a></li>
                       </ul>
                     </li>
-                    {{ render_nav_item('commands', 'Commands') }}
+                    <li class="nav-item dropdown" style="list-style-type: none;">
+                      <a class="nav-link dropdown-toggle" href="/templates" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Commands
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/commands">Commands list</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/execCommand">Execute the command</a></li>
+                      </ul>
+                    </li>
                     {{ render_nav_item('webhooks_route', 'Webhooks') }}
             </div>
             {% if current_user.email %}
