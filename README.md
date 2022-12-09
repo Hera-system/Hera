@@ -43,6 +43,10 @@ This is a server management system. It works only after installing the [Webhook]
 1. You are login in [Hera](https://github.com/Hera-system/Hera) using password and email from [alerta](https://github.com/alerta/alerta).
 2. Create template on endpoint `/addTemplate`.
 3. Confirm template from other account on endpoint `/confirmTemplate` or skip for admin.
-4. Send execute template to webhook from endpoint `/execCommand`.
+4. Send the template for execution to the webhook from the `/execCommand` endpoint.
 5. Wait until execute command.
 6. View result on endpoint `/commands`.
+
+## Docs
+
+[Wiki](https://github.com/Hera-system/Hera/wiki)
