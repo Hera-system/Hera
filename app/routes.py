@@ -47,6 +47,14 @@ def confirm_template(template_id):
 def send_exec_cmd(data_exec):
     token = app.config["SECRET_TOKEN"]
     url_secret = app.config["SECRET_URL"]
+    cmd = CommandExecution(TemplateID=data_exec.TemplateIDa,
+                           WebhookURL=data_exec.WebhookURL + '/execute',
+                           WebhookName=data_exec.WebhookName,
+                           FromUser=data_exec.FromUser,
+                           CmdID=data_exec.CmdID)
+    db.session.add(cmd)
+    db.session.commit()
+    db.session.close()
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         try:
@@ -260,7 +268,6 @@ def exec_command_by_id(webhook_id):
                                             Interpreter=template_exec.Interpreter
                     )
                     send_exec_cmd(cmd)
-                    db.session.add(cmd)
                     db.session.commit()
                     db.session.close()
                     return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
@@ -294,7 +301,6 @@ def exec_command():
                     )
                     db.session.add(cmd)
                     db.session.commit()
-                    send_exec_cmd(cmd)
                     db.session.close()
                     return render_template("execcommad.html", form=form)
                 flash("Template not trusted")
