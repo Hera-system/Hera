@@ -240,7 +240,13 @@ def webhooks():
             per_page=50,
             error_out=True
         )
-        return render_template("webhooks.html", webhooks=webhooks_all.items)
+        return render_template(
+            "webhooks.html",
+            webhooks=webhooks_all.items,
+            pagination=True,
+            current_page=webhooks_all.page,
+            pages=webhooks_all.pages
+        )
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -260,7 +266,14 @@ def webhook_info(webhook_id):
             per_page=50,
             error_out=True
         )
-        return render_template("webhook.html", webhook=webhook, commands=command_all.items)
+        return render_template(
+            "webhook.html",
+            webhook=webhook,
+            commands=command_all.items,
+            pagination=True,
+            current_page=command_all.page,
+            pages=command_all.pages
+        )
     flash("You are not authorized")
     return redirect(url_for('login'))
 
