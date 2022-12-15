@@ -120,8 +120,13 @@ def get_user(email):
 @login_required
 def templates():
     if current_user.is_authenticated:
-        template_all = Templates.query.all()
-        return render_template("templates.html", templates=template_all, lenght_str=15)
+        page = request.args.get('page', default=1, type=int)
+        templates_all = Templates.query.order_by(Templates.ID.desc()).paginate(
+                                                                                                page=page,
+                                                                                                per_page=50,
+                                                                                                error_out=True
+        )
+        return render_template("templates.html", templates=templates_all.items, lenght_str=15)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
