@@ -130,7 +130,9 @@ def templates():
 @login_required
 def commands():
     if current_user.is_authenticated:
-        command_exec = reversed(CommandExecution.query.all())
+        page = request.args.get('next', default="page", type=int)
+        # command_exec = reversed(CommandExecution.query.all())
+        command_exec = reversed(CommandExecution.query.paginate(page, 50, True))
         return render_template("commands.html", commands=command_exec)
     flash("You are not authorized")
     return redirect(url_for('login'))
