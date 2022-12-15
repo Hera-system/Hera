@@ -21,7 +21,7 @@ services:
   db:
     image: postgres
     ports:
-      - 5432
+      - 5432:5432
     environment:
       POSTGRES_DB: hera
       POSTGRES_USER: postgres
