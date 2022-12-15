@@ -30,3 +30,4 @@ class Config(object):
     WEBHOOK = {
         "AutoUpdate": False
     }
+    ITEMS_PER_PAGE = 30

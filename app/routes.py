@@ -123,10 +123,17 @@ def templates():
         page = request.args.get('page', default=1, type=int)
         templates_all = Templates.query.order_by(Templates.ID.desc()).paginate(
                                                                                 page=page,
-                                                                                per_page=50,
+                                                                                per_page=app.config['ITEMS_PER_PAGE'],
                                                                                 error_out=True
         )
-        return render_template("templates.html", templates=templates_all.items, lenght_str=15)
+        return render_template(
+            "templates.html",
+            templates=templates_all.items,
+            lenght_str=15,
+            pagination=True,
+            current_page=templates_all.page,
+            pages=templates_all.pages
+        )
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -138,7 +145,7 @@ def commands():
         page = request.args.get('page', default=1, type=int)
         command_exec = CommandExecution.query.order_by(CommandExecution.RowID.desc()).paginate(
                                                                                                 page=page,
-                                                                                                per_page=50,
+                                                                                                per_page=app.config['ITEMS_PER_PAGE'],
                                                                                                 error_out=True
         )
         return render_template(
@@ -237,7 +244,7 @@ def webhooks():
         page = request.args.get('page', default=1, type=int)
         webhooks_all = WebhookConnect.query.order_by(WebhookConnect.ID.desc()).paginate(
             page=page,
-            per_page=50,
+            per_page=app.config['ITEMS_PER_PAGE'],
             error_out=True
         )
         return render_template(
@@ -263,7 +270,7 @@ def webhook_info(webhook_id):
         command_all = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).\
             order_by(CommandExecution.RowID.desc()).paginate(
             page=page,
-            per_page=50,
+            per_page=app.config['ITEMS_PER_PAGE'],
             error_out=True
         )
         return render_template(
