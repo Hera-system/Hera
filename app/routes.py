@@ -168,16 +168,16 @@ def login():
         if form.Email.data == app.config['SU_USER'] and form.Password.data == app.config['SU_PASS']:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
             flash("You are authorized in Hera system!")
-            print(request.form['next'])
-            print(request.form['next'][1:])
+            print(request.args.get['next'])
+            print(request.args.get['next'][1:])
             return redirect(url_for('templates'))
         auth = AlertaAuth(password=form.Password.data, username=form.Email.data)
         request_auth = requests.post(app.config["ALERTA_URL"], json=auth.json())
         if request_auth.status_code == 200:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
-            print(request.form['next'])
-            print(request.form['next'][1:])
+            print(request.args.get['next'])
+            print(request.args.get['next'][1:])
             return redirect(url_for('templates'))
     return render_template('login.html', form=form)
 
