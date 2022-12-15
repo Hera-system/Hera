@@ -55,8 +55,7 @@ def send_exec_cmd(data_exec):
     db.session.add(cmd)
     db.session.commit()
     db.session.close()
-    return flash("Command register.")
-    request_secret = requests.get(url_secret)
+    request_secret = requests.get(url_secret, timeout=2)
     if request_secret.status_code == 200:
         try:
             cmd = ExecutionCommand(
@@ -71,7 +70,7 @@ def send_exec_cmd(data_exec):
             print(e)
             return flash(str(e))
         headers = {'Content-type': 'text/plain'}
-        request_webhook = requests.post(data_exec.WebhookURL, data=cmd.json(), headers=headers)
+        request_webhook = requests.post(data_exec.WebhookURL, data=cmd.json(), headers=headers, timeout=2)
         if request_webhook.status_code == 200:
             return flash("Successful send execute command.")
     return flash("Error send execute command.")
