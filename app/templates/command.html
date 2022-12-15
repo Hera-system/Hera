@@ -104,7 +104,11 @@
 </div>
 <div class="container" style="background-color: rgba(0, 0, 0, 0.09); border: 1px solid silver; border-radius: 5px;">
 <pre id="pre-for-copy">
-{{ command.Stdout }}
+{{ if command.Stdout == "" || command.Stdout is None }}
+    Stdout is None. Please check logs webhook.
+{{ else }}
+    {{ command.Stdout }}
+{{ endif }}
 </pre>
 </div>
 <script src="/static/js/copyPre.js"></script>
