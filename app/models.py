@@ -117,7 +117,7 @@ class ResultWebhook(BaseModel):
     Message: str
 
 class ArgsCommandExecution(BaseModel):
-    TemplateID: id
+    TemplateID: int
     WebhookURL: str
     WebhookName: str
     FromUser: str
