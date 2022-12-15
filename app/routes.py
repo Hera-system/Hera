@@ -211,7 +211,7 @@ def add_template():
 
 @app.route('/webhooks', methods=['GET', 'POST'])
 @login_required
-def webhooks_route():
+def webhooks():
     if current_user.is_authenticated:
         if not app.config['WEBHOOK']['AutoUpdate']:
             x = threading.Thread(target=update_status_webhook, args=(30,))
@@ -282,7 +282,7 @@ def exec_command_by_id(webhook_id):
 
 @app.route('/execCommand', methods=['GET', 'POST'])
 @login_required
-def exec_command():
+def execCommand():
     if current_user.is_authenticated:
         form = ExecuteCommand()
         if form.validate_on_submit():
