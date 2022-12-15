@@ -229,7 +229,7 @@ def webhooks():
             x.start()
             app.config['WEBHOOK']['AutoUpdate'] = True
         page = request.args.get('page', default=1, type=int)
-        webhooks = WebhookConnect.query.order_by(CommandExecution.ID.desc()).paginate(
+        webhooks = WebhookConnect.query.order_by(WebhookConnect.ID.desc()).paginate(
             page=page,
             per_page=50,
             error_out=True
