@@ -23,7 +23,7 @@ class Config(object):
         SQLALCHEMY_ENGINE_OPTIONS = {
             'SQLALCHEMY_POOL_SIZE': 20,
             'pool_reset_on_return': 'commit',
-            'pool_timeout': 5
+            'SQLALCHEMY_POOL_TIMEOUT': 5
         }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_ADD_STATUS = False
