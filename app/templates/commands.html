@@ -21,7 +21,7 @@
     </thead>
     <tbody>
         {% for command in commands %}
-        {% if command.Error %}
+        {% if (command.Error or command.Stdout == "" or command.Stdout is none) %}
             <tr class="table-danger">
         {% else %}
             <tr class="table-success">
