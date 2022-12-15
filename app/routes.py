@@ -145,7 +145,6 @@ def commands():
             "commands.html",
             commands=command_exec.items,
             pagination=True,
-            route_page="commands",
             current_page=command_exec.page,
             pages=command_exec.pages
         )
