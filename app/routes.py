@@ -122,9 +122,9 @@ def templates():
     if current_user.is_authenticated:
         page = request.args.get('page', default=1, type=int)
         templates_all = Templates.query.order_by(Templates.ID.desc()).paginate(
-                                                                                                page=page,
-                                                                                                per_page=50,
-                                                                                                error_out=True
+                                                                                page=page,
+                                                                                per_page=50,
+                                                                                error_out=True
         )
         return render_template("templates.html", templates=templates_all.items, lenght_str=15)
     flash("You are not authorized")
@@ -228,8 +228,13 @@ def webhooks():
             logging.info("Start webhook thread")
             x.start()
             app.config['WEBHOOK']['AutoUpdate'] = True
-        webhooks = WebhookConnect.query.all()
-        return render_template("webhooks.html", webhooks=webhooks)
+        page = request.args.get('page', default=1, type=int)
+        webhooks = WebhookConnect.query.order_by(CommandExecution.ID.desc()).paginate(
+            page=page,
+            per_page=50,
+            error_out=True
+        )
+        return render_template("webhooks.html", webhooks=webhooks.items)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
