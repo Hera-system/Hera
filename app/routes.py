@@ -10,7 +10,7 @@ from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
 from flask import render_template, flash, redirect, url_for, \
-    send_from_directory
+    send_from_directory, request
 from flask_restful import Resource
 from flask_pydantic import validate
 from pydantic import ValidationError
@@ -168,12 +168,16 @@ def login():
         if form.Email.data == app.config['SU_USER'] and form.Password.data == app.config['SU_PASS']:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
             flash("You are authorized in Hera system!")
+            print(request.form['next'])
+            print(request.form['next'][1:])
             return redirect(url_for('templates'))
         auth = AlertaAuth(password=form.Password.data, username=form.Email.data)
         request_auth = requests.post(app.config["ALERTA_URL"], json=auth.json())
         if request_auth.status_code == 200:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
+            print(request.form['next'])
+            print(request.form['next'][1:])
             return redirect(url_for('templates'))
     return render_template('login.html', form=form)
 
