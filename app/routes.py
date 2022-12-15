@@ -41,7 +41,6 @@ def confirm_template(template_id):
     template_curr.UserTrusted = current_user.email
     template_curr.DataTrusted = datetime.datetime.now()
     db.session.commit()
-    cleanup(db.session)
     flash("Template trusted")
 
 
@@ -67,7 +66,6 @@ def send_exec_cmd(data_exec):
         request_webhook = requests.post(data_exec.WebhookURL, data=cmd.json(), headers=headers)
         if request_webhook.status_code == 200:
             return flash("Successful send execute command.")
-    cleanup(db.session)
     return flash("Error send execute command.")
 
 
@@ -88,7 +86,6 @@ def gen_uniq_id(lenght: int) -> str:
     check_query = CommandExecution.query.filter_by(CmdID=rnd_string).first()
     if check_query is None:
         return rnd_string
-    cleanup(db.session)
     return gen_uniq_id(lenght)
 
 
@@ -108,7 +105,6 @@ def get_user(email):
         user = Users(email=email)
         db.session.add(user)
         db.session.commit()
-    cleanup(db.session)
     return user
 
 
@@ -129,7 +125,6 @@ def commands():
         command_exec = reversed(CommandExecution.query.all())
         return render_template("commands.html", commands=command_exec)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -141,7 +136,6 @@ def command(template_id):
             command_exec = CommandExecution.query.filter_by(RowID=int(template_id)).first()
             return render_template("command.html", command=command_exec)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -156,7 +150,6 @@ def template(template_id):
                 confirm_template(template_id)
             return render_template("template.html", template=template_curr, form=form)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -167,14 +160,12 @@ def login():
         if form.Email.data == app.config['SU_USER'] and form.Password.data == app.config['SU_PASS']:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
             flash("You are authorized in Hera system!")
-            cleanup(db.session)
             return redirect(url_for('templates'))
         auth = AlertaAuth(password=form.Password.data, username=form.Email.data)
         request_auth = requests.post(app.config["ALERTA_URL"], json=auth.json())
         if request_auth.status_code == 200:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=7))
             flash("You are authorized in Hera system!")
-            cleanup(db.session)
             return redirect(url_for('templates'))
     return render_template('login.html', form=form)
 
@@ -187,7 +178,6 @@ def confirm_templates():
         if form.validate_on_submit():
             confirm_template(form.TemplateID.data)
         return render_template('trustedTemplate.html', form=form)
-    cleanup(db.session)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -205,11 +195,9 @@ def add_template():
             db.session.add(form)
             db.session.commit()
             flash(f'Template added! ID - {form.ID}')
-            cleanup(db.session)
             form = TemplateAdded()
         return render_template('addedTemplate.html', form=form)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -224,7 +212,6 @@ def webhooks_route():
         webhooks = WebhookConnect.query.all()
         return render_template("webhooks.html", webhooks=webhooks)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -239,7 +226,6 @@ def webhook_info(webhook_id):
         commands = reversed(CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).all())
         return render_template("webhook.html", webhook=webhook, commands=commands)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -252,7 +238,6 @@ def exec_command_by_id(webhook_id):
             webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
             flash(f"Error, not found webhook - {webhook_id}")
-            cleanup(db.session)
             return redirect(url_for('exec_command'))
         form = ExecuteCommandWebhook()
         if form.validate_on_submit():
@@ -268,16 +253,13 @@ def exec_command_by_id(webhook_id):
                     webhook_uniq_name = webhook.uniq_name
                     db.session.add(cmd)
                     db.session.commit()
-                    cleanup(db.session)
                     return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        cleanup(db.session)
         webhook_uniq_name = webhook.uniq_name
         return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
     flash("You are not authorized")
-    cleanup(db.session)
     return redirect(url_for('login'))
 
 
@@ -302,9 +284,7 @@ def exec_command():
                 flash("Template not trusted")
             else:
                 flash("Template not found")
-        cleanup(db.session)
         return render_template("execcommad.html", form=form)
-    cleanup(db.session)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
@@ -331,7 +311,6 @@ class ResultApi(Resource):
         resp_data.Message = result.Message
         resp_data.TimeUpd = datetime.datetime.now()
         db.session.commit()
-        cleanup(db.session)
         return InfoReturnApi(error=False, message="Success. The result is received.")
 
 
@@ -362,7 +341,6 @@ class ConnectWebhook(Resource):
                                  uniq_name=body.webhook_uniq_name)
         db.session.add(connect)
         db.session.commit()
-        cleanup(db.session)
         return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
@@ -403,13 +381,7 @@ def update_status_webhook(sleep_time):
                     webhook.active = False
                     db.session.commit()
                     logging.error(f"Error update state webhook - {webhook.uniq_name}")
-            cleanup(db.session)
             time.sleep(sleep_time)
-
-def cleanup(session):
-    engine_container = db.get_engine(app)
-    session.close()
-    engine_container.dispose()
 
 
 if __name__ == "__main__":
