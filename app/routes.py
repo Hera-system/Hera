@@ -22,7 +22,8 @@ from app.forms import ExecuteCommand, TemplateAdded, \
     TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
 
 api_v = "v1"
-engine_container = db.get_engine(app)
+with app.app_context():
+    engine_container = db.get_engine(app)
 
 
 def confirm_template(template_id):
