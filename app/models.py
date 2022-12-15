@@ -1,5 +1,3 @@
-from distutils.cmd import Command
-
 from app import db, login
 from flask_login import UserMixin
 from datetime import datetime
@@ -115,6 +113,7 @@ class ResultWebhook(BaseModel):
     Stderr: str
     ID: str
     Message: str
+
 
 class ArgsCommandExecution(BaseModel):
     TemplateID: int

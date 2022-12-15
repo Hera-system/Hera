@@ -47,7 +47,7 @@ def confirm_template(template_id):
 def send_exec_cmd(data_exec):
     token = app.config["SECRET_TOKEN"]
     url_secret = app.config["SECRET_URL"]
-    cmd = CommandExecution(TemplateID=data_exec.TemplateIDa,
+    cmd = CommandExecution(TemplateID=data_exec.TemplateID,
                            WebhookURL=data_exec.WebhookURL + '/execute',
                            WebhookName=data_exec.WebhookName,
                            FromUser=data_exec.FromUser,
