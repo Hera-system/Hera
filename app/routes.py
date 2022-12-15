@@ -55,6 +55,7 @@ def send_exec_cmd(data_exec):
     db.session.add(cmd)
     db.session.commit()
     db.session.close()
+    return flash("Command register.")
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
         try:
