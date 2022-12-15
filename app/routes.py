@@ -141,7 +141,14 @@ def commands():
                                                                                                 per_page=50,
                                                                                                 error_out=True
         )
-        return render_template("commands.html", commands=command_exec.items)
+        return render_template(
+            "commands.html",
+            commands=command_exec.items,
+            pagination=True,
+            route_page="commands",
+            current_page=command_exec.page,
+            per_page=command_exec.per_page
+        )
     flash("You are not authorized")
     return redirect(url_for('login'))
 
