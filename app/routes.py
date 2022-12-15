@@ -49,12 +49,11 @@ def send_exec_cmd(data_exec):
     url_secret = app.config["SECRET_URL"]
     request_secret = requests.get(url_secret)
     if request_secret.status_code == 200:
-        template_exec = Templates.query.filter_by(ID=data_exec.TemplateID).first()
         try:
             cmd = ExecutionCommand(
-                                   ExecCommand=template_exec.Command,
-                                   TimeExec=template_exec.TimeExec,
-                                   Interpreter=template_exec.Interpreter,
+                                   ExecCommand=data_exec.ExecCommand,
+                                   TimeExec=data_exec.TimeExec,
+                                   Interpreter=data_exec.Interpreter,
                                    Token=token,
                                    ID=data_exec.CmdID,
                                    HTTPSecret=request_secret.text
@@ -250,14 +249,20 @@ def exec_command_by_id(webhook_id):
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-                    cmd = CommandExecution(TemplateID=form.TemplateID.data,
-                                           WebhookURL=webhook_url+'/execute',
-                                           WebhookName=webhook_uniq_name,
-                                           FromUser=current_user.email,
-                                           CmdID=gen_uniq_id(10))
+                    cmd = CommandExecution(
+                                            TemplateID=form.TemplateID.data,
+                                            WebhookURL=webhook_url+'/execute',
+                                            WebhookName=webhook_uniq_name,
+                                            FromUser=current_user.email,
+                                            CmdID=gen_uniq_id(10),
+                                            ExecCommand=template_exec.Command,
+                                            TimeExec=template_exec.TimeExec,
+                                            Interpreter=template_exec.Interpreter
+                    )
                     send_exec_cmd(cmd)
                     db.session.add(cmd)
                     db.session.commit()
+                    db.session.close()
                     return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
                 flash("Template not trusted")
             else:
@@ -277,14 +282,20 @@ def exec_command():
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-                    cmd = CommandExecution(TemplateID=form.TemplateID.data,
-                                           WebhookURL=form.WebhookURL.data,
-                                           TimeExecute=template_exec.TimeExec,
-                                           FromUser=current_user.email,
-                                           CmdID=gen_uniq_id(10))
+                    cmd = CommandExecution(
+                                            TemplateID=form.TemplateID.data,
+                                            WebhookURL=form.WebhookURL.data,
+                                            TimeExecute=template_exec.TimeExec,
+                                            FromUser=current_user.email,
+                                            CmdID=gen_uniq_id(10),
+                                            ExecCommand=template_exec.Command,
+                                            TimeExec=template_exec.TimeExec,
+                                            Interpreter=template_exec.Interpreter
+                    )
                     db.session.add(cmd)
                     db.session.commit()
                     send_exec_cmd(cmd)
+                    db.session.close()
                     return render_template("execcommad.html", form=form)
                 flash("Template not trusted")
             else:
