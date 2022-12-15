@@ -147,7 +147,7 @@ def commands():
             pagination=True,
             route_page="commands",
             current_page=command_exec.page,
-            per_page=command_exec.per_page
+            pages=command_exec.pages
         )
     flash("You are not authorized")
     return redirect(url_for('login'))
