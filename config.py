@@ -27,3 +27,6 @@ class Config(object):
         }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_ADD_STATUS = False
+    WEBHOOK = {
+        "AutoUpdate": False
+    }
