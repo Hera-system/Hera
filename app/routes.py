@@ -16,7 +16,7 @@ from flask_pydantic import validate
 from pydantic import ValidationError
 
 from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoWebhook, InfoReturnApi, GettingResult, \
-    ExecutionCommand, AlertaAuth, ResultWebhook
+    ExecutionCommand, AlertaAuth, ResultWebhook, ArgsCommandExecution
 from app import app, db, api
 from app.forms import ExecuteCommand, TemplateAdded, \
     TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
@@ -249,7 +249,7 @@ def exec_command_by_id(webhook_id):
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-                    cmd = CommandExecution(
+                    cmd = ArgsCommandExecution(
                                             TemplateID=form.TemplateID.data,
                                             WebhookURL=webhook_url+'/execute',
                                             WebhookName=webhook_uniq_name,
@@ -282,7 +282,7 @@ def exec_command():
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-                    cmd = CommandExecution(
+                    cmd = ArgsCommandExecution(
                                             TemplateID=form.TemplateID.data,
                                             WebhookURL=form.WebhookURL.data,
                                             TimeExecute=template_exec.TimeExec,
