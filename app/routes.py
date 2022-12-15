@@ -96,6 +96,7 @@ def get_git_revision_short_hash() -> str:
 @app.route('/')
 @app.route('/index')
 def index():
+    db.session.close()
     return render_template('index.html', git_revision=get_git_revision_short_hash())
 
 
