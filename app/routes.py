@@ -240,19 +240,22 @@ def exec_command_by_id(webhook_id):
             webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
             flash(f"Error, not found webhook - {webhook_id}")
+            db.session.close()
             return redirect(url_for('exec_command'))
+        db.session.close()
+        webhook_url = webhook.url
+        webhook_uniq_name = webhook.uniq_name
         form = ExecuteCommandWebhook()
         if form.validate_on_submit():
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
                     cmd = CommandExecution(TemplateID=form.TemplateID.data,
-                                           WebhookURL=webhook.url+'/execute',
-                                           WebhookName=webhook.uniq_name,
+                                           WebhookURL=webhook_url+'/execute',
+                                           WebhookName=webhook_uniq_name,
                                            FromUser=current_user.email,
                                            CmdID=gen_uniq_id(10))
                     send_exec_cmd(cmd)
-                    webhook_uniq_name = webhook.uniq_name
                     db.session.add(cmd)
                     db.session.commit()
                     return render_template("execcommad.html", form=form, webhook_name=webhook_uniq_name)
