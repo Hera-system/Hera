@@ -215,7 +215,7 @@ def confirm_templates():
 
 @app.route('/addTemplate', methods=['GET', 'POST'])
 @login_required
-def add_template():
+def addTemplate():
     if current_user.is_authenticated:
         form = TemplateAdded()
         if form.validate_on_submit():
