@@ -104,10 +104,10 @@
 </div>
 <div class="container" style="background-color: rgba(0, 0, 0, 0.09); border: 1px solid silver; border-radius: 5px;">
 <pre id="pre-for-copy">
-{% if (command.Stdout == "" or command.Stdout is None) %}
-    Stdout is None. Please check logs webhook.
+{% if (command.Stdout == "" or command.Stdout is none) %}
+Stdout is None. Please check logs webhook.
 {% else %}
-    {{ command.Stdout }}
+{{ command.Stdout }}
 {% endif %}
 </pre>
 </div>
