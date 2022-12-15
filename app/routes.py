@@ -121,7 +121,7 @@ def get_user(email):
 def templates():
     if current_user.is_authenticated:
         template_all = Templates.query.all()
-        return render_template("templates.html", templates=template_all, lenght=15)
+        return render_template("templates.html", templates=template_all, lenght_str=15)
     flash("You are not authorized")
     return redirect(url_for('login'))
 

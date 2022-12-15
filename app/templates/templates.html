@@ -35,10 +35,18 @@
                 </a>
             </td>
             <td>
-                {{ template.Interpreter[0:lenght] }}...s
+                {% if template.Interpreter | length > lenght_str %}
+                    {{ template.Interpreter[0:lenght_str] }}...
+                {% else %}
+                    {{ template.Interpreter }}
+                {% endif %}
             </td>
             <td>
-                {{ template.Command[0:lenght] }}...
+                {% if template.Command | length > lenght_str %}
+                    {{ template.Command[0:lenght_str] }}...
+                {% else %}
+                    {{ template.Interpreter }}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
