@@ -45,7 +45,7 @@
                 {% if template.Command | length > lenght_str %}
                     {{ template.Command[0:lenght_str] }}...
                 {% else %}
-                    {{ template.Interpreter }}
+                    {{ template.Command }}
                 {% endif %}
             </td>
         </tr>
