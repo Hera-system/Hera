@@ -22,8 +22,6 @@ from app.forms import ExecuteCommand, TemplateAdded, \
     TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
 
 api_v = "v1"
-with app.app_context():
-    engine_container = db.get_engine(app)
 
 
 def confirm_template(template_id):
@@ -409,10 +407,7 @@ def update_status_webhook(sleep_time):
             time.sleep(sleep_time)
 
 def cleanup(session):
-    """
-    This method cleans up the session object and closes the connection pool using the dispose
-    method.
-    """
+    engine_container = db.get_engine(app)
     session.close()
     engine_container.dispose()
 
