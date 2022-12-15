@@ -362,24 +362,25 @@ def not_found_error(error):
 
 def update_status_webhook(sleep_time):
     while True:
-        webhooks = WebhookConnect.query.all()
-        for webhook in webhooks:
-            try:
-                if not (webhook is None):
-                    headers = {'Content-type': 'text/plain'}
-                    request_webhook = requests.post(webhook.url+"/healtcheak", headers=headers, timeout=2)
-                    if request_webhook.status_code == 200:
-                        # webhook_cur = WebhookConnect.query.filter_by(url=webhook.url).first()
-                        webhook.active = True
-                        webhook.time_connect = datetime.datetime.now()
-                    else:
-                        webhook.active = False
+        with app.app_context():
+            webhooks = WebhookConnect.query.all()
+            for webhook in webhooks:
+                try:
+                    if not (webhook is None):
+                        headers = {'Content-type': 'text/plain'}
+                        request_webhook = requests.post(webhook.url+"/healtcheak", headers=headers, timeout=2)
+                        if request_webhook.status_code == 200:
+                            # webhook_cur = WebhookConnect.query.filter_by(url=webhook.url).first()
+                            webhook.active = True
+                            webhook.time_connect = datetime.datetime.now()
+                        else:
+                            webhook.active = False
+                        db.session.commit()
+                    logging.info(f"Update state - {webhook.uniq_name}")
+                except:  # noqa: E722
+                    webhook.active = False
                     db.session.commit()
-                logging.info(f"Update state - {webhook.uniq_name}")
-            except:  # noqa: E722
-                webhook.active = False
-                db.session.commit()
-                logging.error(f"Error update state webhook - {webhook.uniq_name}")
+                    logging.error(f"Error update state webhook - {webhook.uniq_name}")
         time.sleep(sleep_time)
 
 
