@@ -229,12 +229,12 @@ def webhooks():
             x.start()
             app.config['WEBHOOK']['AutoUpdate'] = True
         page = request.args.get('page', default=1, type=int)
-        webhooks = WebhookConnect.query.order_by(WebhookConnect.ID.desc()).paginate(
+        webhooks_all = WebhookConnect.query.order_by(WebhookConnect.ID.desc()).paginate(
             page=page,
             per_page=50,
             error_out=True
         )
-        return render_template("webhooks.html", webhooks=webhooks.items)
+        return render_template("webhooks.html", webhooks=webhooks_all.items)
     flash("You are not authorized")
     return redirect(url_for('login'))
 
