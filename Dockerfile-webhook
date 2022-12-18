@@ -3,7 +3,7 @@ FROM golang:1.18.8-alpine AS builder
 RUN apk --no-cache add git && git clone https://github.com/Hera-system/webhook.git && cd webhook && go build .
 
 FROM alpine:3.17.0
-COPY --from=builder /app/webhook/webhook /webhook
+COPY --from=builder /webhook/webhook /webhook
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD nc -z 127.0.0.1 7342
 
