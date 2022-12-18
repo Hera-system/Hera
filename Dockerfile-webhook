@@ -3,9 +3,8 @@ FROM golang:1.19.4-alpine3.17 AS builder
 RUN apk --no-cache add git binutils && git clone https://github.com/Hera-system/webhook.git && cd webhook && go build . && strip webhook
 
 FROM alpine:3.17.0
-COPY --from=builder /go/webhook /webhook
-
-RUN chmod +x /webhook
+COPY --from=builder /go/webhook/webhook /webhook
+COPY --from=builder /go/webhook/hera.config.json /hera.config.json
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD nc -z 127.0.0.1 7342
 
