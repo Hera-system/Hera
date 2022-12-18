@@ -1,6 +1,5 @@
 FROM python:3.10-alpine AS builder
 
-WORKDIR /app
 COPY . .
 
 RUN apk add --no-cache gcc g++ musl-dev git && \
@@ -12,7 +11,7 @@ FROM python:3.10-alpine
 WORKDIR /app
 COPY . .
 COPY --from=builder /app/wheels /wheels
-COPY --from=builder revision.txt revision.txt
+COPY --from=builder /app/revision.txt revision.txt
 
 ARG ALERTA_URL=https://alerta.io/auth/login \
     CURRENT_ENV=production \
