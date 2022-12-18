@@ -1,16 +1,18 @@
 FROM python:3.10-alpine AS builder
 
-COPY requirements.txt .
+WORKDIR /app
+COPY . .
 
 RUN apk add --no-cache gcc g++ musl-dev git && \
-    pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+    pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt && \
+    git rev-parse --short HEAD > revision.txt
 
 FROM python:3.10-alpine
 
 WORKDIR /app
 COPY . .
 COPY --from=builder /app/wheels /wheels
-COPY --from=builder /usr/bin/git /usr/bin/git
+COPY --from=builder revision.txt revision.txt
 
 ARG ALERTA_URL=https://alerta.io/auth/login \
     CURRENT_ENV=production \

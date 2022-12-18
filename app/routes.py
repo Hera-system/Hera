@@ -5,7 +5,6 @@ import logging
 import requests
 import datetime
 import threading
-import subprocess
 from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
@@ -97,7 +96,10 @@ def gen_uniq_id(lenght: int) -> str:
 
 
 def get_git_revision_short_hash() -> str:
-    return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
+    f = open("revision.txt", "r")
+    revision = f.readline()
+    f.close()
+    return revision
 
 
 @app.route('/')
@@ -122,9 +124,9 @@ def templates():
     if current_user.is_authenticated:
         page = request.args.get('page', default=1, type=int)
         templates_all = Templates.query.order_by(Templates.ID.desc()).paginate(
-                                                                                page=page,
-                                                                                per_page=app.config['ITEMS_PER_PAGE'],
-                                                                                error_out=True
+            page=page,
+            per_page=app.config['ITEMS_PER_PAGE'],
+            error_out=True
         )
         return render_template(
             "templates.html",
@@ -144,9 +146,9 @@ def commands():
     if current_user.is_authenticated:
         page = request.args.get('page', default=1, type=int)
         command_exec = CommandExecution.query.order_by(CommandExecution.RowID.desc()).paginate(
-                                                                                                page=page,
-                                                                                                per_page=app.config['ITEMS_PER_PAGE'],
-                                                                                                error_out=True
+            page=page,
+            per_page=app.config['ITEMS_PER_PAGE'],
+            error_out=True
         )
         return render_template(
             "commands.html",
