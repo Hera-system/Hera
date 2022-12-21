@@ -344,6 +344,7 @@ def execCommand():
                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
                     cmd = ArgsCommandExecution(
                                             TemplateID=form.TemplateID.data,
+                                            WebhookName=form.WebhookURL.data,
                                             WebhookURL=form.WebhookURL.data,
                                             TimeExecute=template_exec.TimeExec,
                                             FromUser=current_user.email,
