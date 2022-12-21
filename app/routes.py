@@ -387,6 +387,7 @@ class ConnectWebhook(Resource):
                                  os_type=body.os_type,
                                  os_arch=body.os_arch,
                                  cpu_core=body.cpu_core,
+                                 connect_type=body.connect_type,
                                  uniq_name=body.webhook_uniq_name)
         db.session.add(connect)
         db.session.commit()
