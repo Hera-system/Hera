@@ -83,7 +83,7 @@
             Command creation time
         </th>
         <td>
-            {{ command.TimeCrt }}
+            {{ command.TimeCrt|nice_datetime }}
         </td>
     </tr>
     <tr>
@@ -91,7 +91,7 @@
             Command update time
         </th>
         <td>
-            {{ command.TimeUpd }}
+            {{ command.TimeUpd|nice_datetime }}
         </td>
     </tr>
 </table>

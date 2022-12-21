@@ -5,4 +5,7 @@ from app import app
 def nice_datetime(date):
     if date is None:
         return date
-    return date.strftime("%d/%m/%Y, %H:%M:%S")
+    try:
+        return date.strftime("%d/%m/%Y, %H:%M:%S")
+    except:  # noqa: E722
+        return date
