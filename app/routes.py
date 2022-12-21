@@ -353,7 +353,7 @@ def execCommand():
                                             TimeExec=template_exec.TimeExec,
                                             Interpreter=template_exec.Interpreter
                     )
-                    db.session.add(cmd)
+                    send_exec_cmd(cmd)
                     db.session.commit()
                     db.session.close()
                     return render_template("execcommad.html", form=form)
