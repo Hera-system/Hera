@@ -68,6 +68,10 @@ def send_exec_cmd(data_exec):
         except ValidationError as e:
             print(e)
             return flash(str(e))
+        webhook_cur = WebhookConnect.query.filter_by(uniq_name=data_exec.WebhookName).first()
+        if not webhook_cur is None:
+            if webhook_cur.connect_type == "reverse":
+                return flash("Command set in queue to webhook")
         headers = {'Content-type': 'text/plain'}
         request_webhook = requests.post(data_exec.WebhookURL, data=cmd.json(), headers=headers, timeout=2)
         if request_webhook.status_code == 200:
