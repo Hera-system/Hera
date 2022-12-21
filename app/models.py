@@ -25,6 +25,7 @@ class CommandExecution(db.Model):
 
 class WebhookConnect(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
+    connect_type = db.Column(db.String)
     hostname = db.Column(db.String)
     username = db.Column(db.String)
     version = db.Column(db.String)
@@ -75,6 +76,7 @@ class InfoReturnApi(BaseModel):
 
 class InfoWebhook(BaseModel):
     Token: str
+    connect_type: str
     hostname: str
     username: str
     webhook_vers: str
@@ -124,3 +126,13 @@ class ArgsCommandExecution(BaseModel):
     ExecCommand: str
     TimeExec: int
     Interpreter: str
+
+
+class HealthcheckResult(BaseModel):
+    Status: str
+    ExecCommand: str
+    Interpreter: str
+    Token: str
+    TimeExec: int
+    ID: str
+    HTTPSecret: str

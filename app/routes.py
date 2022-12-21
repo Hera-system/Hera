@@ -15,7 +15,7 @@ from flask_pydantic import validate
 from pydantic import ValidationError
 
 from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoWebhook, InfoReturnApi, GettingResult, \
-    ExecutionCommand, AlertaAuth, ResultWebhook, ArgsCommandExecution
+    ExecutionCommand, AlertaAuth, ResultWebhook, ArgsCommandExecution, HealthcheckResult
 from app import app, db, api
 from app.forms import TemplateAdded, TemplateTrusted, \
     AlertaLogin, TrustTemplate, ExecuteCommandWebhook  # , ExecuteCommand
@@ -47,7 +47,7 @@ def send_exec_cmd(data_exec):
     token = app.config["SECRET_TOKEN"]
     url_secret = app.config["SECRET_URL"]
     cmd = CommandExecution(TemplateID=data_exec.TemplateID,
-                           WebhookURL=data_exec.WebhookURL + '/execute',
+                           WebhookURL=data_exec.WebhookURL,
                            WebhookName=data_exec.WebhookName,
                            FromUser=data_exec.FromUser,
                            CmdID=data_exec.CmdID)
@@ -333,38 +333,6 @@ def exec_command_by_id(webhook_id):
     return redirect(url_for('login'))
 
 
-# @app.route('/execCommand', methods=['GET', 'POST'])
-# @login_required
-# def execCommand():
-#     if current_user.is_authenticated:
-#         form = ExecuteCommand()
-#         if form.validate_on_submit():
-#             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
-#             if not (template_exec is None):
-#                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-#                     cmd = ArgsCommandExecution(
-#                                             TemplateID=form.TemplateID.data,
-#                                             WebhookName=form.WebhookURL.data,
-#                                             WebhookURL=form.WebhookURL.data,
-#                                             TimeExecute=template_exec.TimeExec,
-#                                             FromUser=current_user.email,
-#                                             CmdID=gen_uniq_id(10),
-#                                             ExecCommand=template_exec.Command,
-#                                             TimeExec=template_exec.TimeExec,
-#                                             Interpreter=template_exec.Interpreter
-#                     )
-#                     send_exec_cmd(cmd)
-#                     db.session.commit()
-#                     db.session.close()
-#                     return render_template("execcommad.html", form=form)
-#                 flash("Template not trusted")
-#             else:
-#                 flash("Template not found")
-#         return render_template("execcommad.html", form=form)
-#     flash("You are not authorized")
-#     return redirect(url_for('login'))
-
-
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory('static/', 'image/favicons/favicon.ico')
@@ -420,6 +388,29 @@ class ConnectWebhook(Resource):
         return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
+class Healthcheck(Resource):
+    @validate()
+    def post(self, body: InfoWebhook):
+        if body.connect_type != "reverse":
+            return "Method not supported for current webhook type", 405
+        ConnectWebhook.post(body)
+        command_execution = CommandExecution.query.filter_by(uniq_name=body.webhook_uniq_name).filter_by(TimeUpd=None).first()
+        if command_execution is None:
+            return HealthcheckResult(Status="OK.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="",
+                                     HTTPSecret="")
+        template = Templates.query.filter_by(ID=command_execution.TemplateID).first()
+        if template is None:
+            return HealthcheckResult(Status="Template not found.", ExecCommand="", Interpreter="", Token="",
+                TimeExec=0, ID="", HTTPSecret="")
+        request_secret = requests.get(app.config["SECRET_URL"], timeout=2)
+        if request_secret.status_code == 200:
+            return HealthcheckResult(Status="Queued.", ExecCommand=template.Command, Interpreter=template.Interpreter,
+                Token=app.config["SECRET_TOKEN"], TimeExec=template.TimeExec, ID=command_execution.CmdID,
+                HTTPSecret=request_secret.text)
+        return HealthcheckResult(Status="Error.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="",
+                                 HTTPSecret="")
+
+
 class InfoApi(Resource):
     def get(self):
         pass  # Future alerta integrations this
@@ -428,6 +419,7 @@ class InfoApi(Resource):
 
 api.add_resource(ResultApi, f'/api/{api_v}/result')
 api.add_resource(ConnectWebhook, f'/api/{api_v}/result/connect')
+api.add_resource(Healtcheck, f'/api/{api_v}/healthcheck')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
 
 
@@ -439,7 +431,7 @@ def not_found_error(error):
 def update_status_webhook(sleep_time):
     while True:
         with app.app_context():
-            webhooks = WebhookConnect.query.all()
+            webhooks = WebhookConnect.query.filter_by(connect_type="direct")
             for webhook in webhooks:
                 try:
                     if not (webhook is None):
