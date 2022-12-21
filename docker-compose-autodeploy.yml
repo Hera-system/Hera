@@ -28,8 +28,14 @@ services:
       POSTGRES_PASSWORD: postgres
     restart: always
 
-  webhook:
+  webhook-direct:
     depends_on:
       - site
-    image: hera-webhook:local
+    image: hera-webhook-direct:local
+    restart: always
+
+  webhook-reverse:
+    depends_on:
+      - site
+    image: hera-webhook-reverse:local
     restart: always
