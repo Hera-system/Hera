@@ -28,13 +28,13 @@ def confirm_template(template_id):
     template_curr = Templates.query.filter_by(ID=template_id).first()
     if template_curr is None:
         flash("Template not found")
-        return redirect(url_for(redirect_to, id=template_id))
+        return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.UserCrt == current_user.email and template_curr.UserCrt != app.config['SU_USER']:
         flash("User created template not permission to trusted this template")
         return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.Trusted:
         flash(f"Template - ID {template_curr.ID} is trusted.")
-        return redirect(url_for(redirect_to, id=template_id))
+        return redirect(url_for(redirect_to, template_id=template_id))
     template_curr.Trusted = True
     template_curr.ID = template_id
     template_curr.UserTrusted = current_user.email
