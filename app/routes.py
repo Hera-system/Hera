@@ -333,36 +333,36 @@ def exec_command_by_id(webhook_id):
     return redirect(url_for('login'))
 
 
-@app.route('/execCommand', methods=['GET', 'POST'])
-@login_required
-def execCommand():
-    if current_user.is_authenticated:
-        form = ExecuteCommand()
-        if form.validate_on_submit():
-            template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
-            if not (template_exec is None):
-                if template_exec.Trusted or current_user.email == app.config['SU_USER']:
-                    cmd = ArgsCommandExecution(
-                                            TemplateID=form.TemplateID.data,
-                                            WebhookName=form.WebhookURL.data,
-                                            WebhookURL=form.WebhookURL.data,
-                                            TimeExecute=template_exec.TimeExec,
-                                            FromUser=current_user.email,
-                                            CmdID=gen_uniq_id(10),
-                                            ExecCommand=template_exec.Command,
-                                            TimeExec=template_exec.TimeExec,
-                                            Interpreter=template_exec.Interpreter
-                    )
-                    send_exec_cmd(cmd)
-                    db.session.commit()
-                    db.session.close()
-                    return render_template("execcommad.html", form=form)
-                flash("Template not trusted")
-            else:
-                flash("Template not found")
-        return render_template("execcommad.html", form=form)
-    flash("You are not authorized")
-    return redirect(url_for('login'))
+# @app.route('/execCommand', methods=['GET', 'POST'])
+# @login_required
+# def execCommand():
+#     if current_user.is_authenticated:
+#         form = ExecuteCommand()
+#         if form.validate_on_submit():
+#             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
+#             if not (template_exec is None):
+#                 if template_exec.Trusted or current_user.email == app.config['SU_USER']:
+#                     cmd = ArgsCommandExecution(
+#                                             TemplateID=form.TemplateID.data,
+#                                             WebhookName=form.WebhookURL.data,
+#                                             WebhookURL=form.WebhookURL.data,
+#                                             TimeExecute=template_exec.TimeExec,
+#                                             FromUser=current_user.email,
+#                                             CmdID=gen_uniq_id(10),
+#                                             ExecCommand=template_exec.Command,
+#                                             TimeExec=template_exec.TimeExec,
+#                                             Interpreter=template_exec.Interpreter
+#                     )
+#                     send_exec_cmd(cmd)
+#                     db.session.commit()
+#                     db.session.close()
+#                     return render_template("execcommad.html", form=form)
+#                 flash("Template not trusted")
+#             else:
+#                 flash("Template not found")
+#         return render_template("execcommad.html", form=form)
+#     flash("You are not authorized")
+#     return redirect(url_for('login'))
 
 
 @app.route('/favicon.ico')
