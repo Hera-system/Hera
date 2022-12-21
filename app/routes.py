@@ -373,6 +373,7 @@ class ConnectWebhook(Resource):
             resp_data.os_type = body.os_type
             resp_data.os_arch = body.os_arch
             resp_data.cpu_core = body.cpu_core
+            resp_data.connect_type = body.connect_type
             db.session.commit()
             return InfoReturnApi(error=False, message="Webhook successful connected. Information updated.")
         connect = WebhookConnect(hostname=body.hostname,
