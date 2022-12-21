@@ -21,20 +21,20 @@
                         Templates
                       </a>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="url_for('templates')">Templates</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('templates')}}">Templates</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="url_for('addTemplate')">Add</a></li>
-                        <li><a class="dropdown-item" href="url_for('confirm_templates')">Confirm</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('addTemplate')}}">Add</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('confirm_templates')}}">Confirm</a></li>
                       </ul>
                     </li>
                     <li class="nav-item dropdown" style="list-style-type: none;">
-                      <a class="nav-link dropdown-toggle" href="url_for('commands')" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <a class="nav-link dropdown-toggle" href="{{url_for('commands')}}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Commands
                       </a>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="url_for('commands')">Commands list</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('commands')}}">Commands list</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="url_for('execCommand')">Execute the command</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('execCommand')}}">Execute the command</a></li>
                       </ul>
                     </li>
                     {{ render_nav_item('webhooks', 'Webhooks') }}
