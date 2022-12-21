@@ -1,3 +1,4 @@
+import jinja2
 import babel
 
 from app import app
@@ -9,3 +10,5 @@ def format_datetime(value, format='medium'):
     elif format == 'medium':
         format = "EE dd.MM.y HH:mm"
     return babel.dates.format_datetime(value, format)
+
+jinja2.filters.FILTERS['format_datetime'] = format_datetime
