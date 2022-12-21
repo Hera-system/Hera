@@ -69,7 +69,7 @@ def send_exec_cmd(data_exec):
             print(e)
             return flash(str(e))
         webhook_cur = WebhookConnect.query.filter_by(uniq_name=data_exec.WebhookName).first()
-        if not webhook_cur is None:
+        if webhook_cur is not None:
             if webhook_cur.connect_type == "reverse":
                 return flash("Command set in queue to webhook")
         headers = {'Content-type': 'text/plain'}
@@ -400,21 +400,26 @@ class Healthcheck(Resource):
         if body.connect_type != "reverse":
             return "Method not supported for current webhook type", 405
         ConnectWebhook.post(body)
-        command_execution = CommandExecution.query.filter_by(WebhookName=body.webhook_uniq_name).filter_by(TimeUpd=None).first()
+        command_execution = CommandExecution.query.filter_by(WebhookName=body.webhook_uniq_name).filter_by(TimeUpd=None).first()  # noqa: E501
         if command_execution is None:
-            return HealthcheckResult(Status="OK.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="",
-                                     HTTPSecret="")
+            return HealthcheckResult(
+                Status="OK.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="", HTTPSecret=""
+            )
         template = Templates.query.filter_by(ID=command_execution.TemplateID).first()
         if template is None:
-            return HealthcheckResult(Status="Template not found.", ExecCommand="", Interpreter="", Token="",
-                TimeExec=0, ID="", HTTPSecret="")
+            return HealthcheckResult(
+                Status="Template not found.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="", HTTPSecret=""
+            )
         request_secret = requests.get(app.config["SECRET_URL"], timeout=2)
         if request_secret.status_code == 200:
-            return HealthcheckResult(Status="Queued.", ExecCommand=template.Command, Interpreter=template.Interpreter,
+            return HealthcheckResult(
+                Status="Queued.", ExecCommand=template.Command, Interpreter=template.Interpreter,
                 Token=app.config["SECRET_TOKEN"], TimeExec=template.TimeExec, ID=command_execution.CmdID,
-                HTTPSecret=request_secret.text)
-        return HealthcheckResult(Status="Error.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="",
-                                 HTTPSecret="")
+                HTTPSecret=request_secret.text
+                )
+        return HealthcheckResult(
+            Status="Error.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="", HTTPSecret=""
+        )
 
 
 class InfoApi(Resource):
