@@ -264,6 +264,7 @@ def webhooks():
 @login_required
 def webhook_info(webhook_id):
     if current_user.is_authenticated:
+        webhook = None
         if webhook_id.isdigit():
             webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
         if webhook is None:
