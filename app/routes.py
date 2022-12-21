@@ -419,7 +419,7 @@ class InfoApi(Resource):
 
 api.add_resource(ResultApi, f'/api/{api_v}/result')
 api.add_resource(ConnectWebhook, f'/api/{api_v}/result/connect')
-api.add_resource(Healtcheck, f'/api/{api_v}/healthcheck')
+api.add_resource(Healthcheck, f'/api/{api_v}/healthcheck')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
 
 
