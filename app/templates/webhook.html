@@ -81,7 +81,7 @@
             Last time connect
         </th>
         <td>
-            {{ webhook.time_connect }}
+            {{ webhook.time_connect|nice_datetime }}
         </td>
     </tr>
     {% if webhook.active %}
@@ -134,7 +134,7 @@
                 </a>
             </td>
             <td>
-                    {{ command.TimeUpd }}
+                    {{ command.TimeUpd|nice_datetime }}
             </td>
             <td>
                 <a class="btn btn-light btn-sm w-50" href="{{ url_for('command', template_id=command.RowID) }}">

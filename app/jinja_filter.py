@@ -1,14 +1,8 @@
-import jinja2
-import babel
-
 from app import app
 
-@app.template_filter()
-def format_datetime(value, format='medium'):
-    if format == 'full':
-        format = "EEEE, d. MMMM y 'at' HH:mm"
-    elif format == 'medium':
-        format = "EE dd.MM.y HH:mm"
-    return babel.dates.format_datetime(value, format)
 
-# jinja2.filters.FILTERS['format_datetime'] = format_datetime
+@app.template_filter()
+def nice_datetime(date):
+    if date is None:
+        return date
+    return date.strftime("%d/%m/%Y, %H:%M:%S")

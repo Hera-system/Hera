@@ -61,7 +61,7 @@
             Date of creation
         </th>
         <td>
-            {{ template.DataCrt }}
+            {{ template.DataCrt|nice_datetime }}
         </td>
     </tr>
     <tr>
@@ -77,7 +77,7 @@
             Date of confirmation
         </th>
         <td>
-            {{ template.DataTrusted }}
+            {{ template.DataTrusted|nice_datetime }}
         </td>
     </tr>
 </table>
