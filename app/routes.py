@@ -18,7 +18,7 @@ from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoW
     ExecutionCommand, AlertaAuth, ResultWebhook, ArgsCommandExecution
 from app import app, db, api
 from app.forms import TemplateAdded, TemplateTrusted, \
-    AlertaLogin, TrustTemplate, ExecuteCommandWebhook #, ExecuteCommand
+    AlertaLogin, TrustTemplate, ExecuteCommandWebhook  # , ExecuteCommand
 
 api_v = "v1"
 
