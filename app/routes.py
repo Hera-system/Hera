@@ -394,7 +394,7 @@ class Healthcheck(Resource):
         if body.connect_type != "reverse":
             return "Method not supported for current webhook type", 405
         ConnectWebhook.post(body)
-        command_execution = CommandExecution.query.filter_by(uniq_name=body.webhook_uniq_name).filter_by(TimeUpd=None).first()
+        command_execution = CommandExecution.query.filter_by(WebhookName=body.webhook_uniq_name).filter_by(TimeUpd=None).first()
         if command_execution is None:
             return HealthcheckResult(Status="OK.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="",
                                      HTTPSecret="")
