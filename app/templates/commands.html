@@ -45,7 +45,7 @@
                 </a>
             </td>
             <td>
-                    {{ command.TimeUpd }}
+                    {{ command.TimeUpd|format_datetime }}
             </td>
             <td>
             <a class="btn btn-light btn-sm w-50" href="{{ url_for('command', template_id=command.RowID) }}">
