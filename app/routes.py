@@ -17,8 +17,8 @@ from pydantic import ValidationError
 from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoWebhook, InfoReturnApi, GettingResult, \
     ExecutionCommand, AlertaAuth, ResultWebhook, ArgsCommandExecution
 from app import app, db, api
-from app.forms import ExecuteCommand, TemplateAdded, \
-    TemplateTrusted, AlertaLogin, TrustTemplate, ExecuteCommandWebhook
+from app.forms import TemplateAdded, TemplateTrusted, \
+    AlertaLogin, TrustTemplate, ExecuteCommandWebhook #, ExecuteCommand
 
 api_v = "v1"
 
