@@ -12,6 +12,9 @@
                 Template ID
             </th>
             <th scope="col">
+                Webhook
+            </th>
+            <th scope="col">
                 Data update
             </th>
             <th scope="col">
@@ -34,6 +37,11 @@
             <td>
                 <a href="{{ url_for('template', template_id=command.TemplateID) }}">
                     {{ command.TemplateID }}
+                </a>
+            </td>
+            <td>
+                <a href="{{ url_for('webhook', webhook_id=command.WebhookName) }}">
+                    {{ command.WebhookName }}
                 </a>
             </td>
             <td>

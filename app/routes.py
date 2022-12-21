@@ -264,7 +264,10 @@ def webhooks():
 @login_required
 def webhook_info(webhook_id):
     if current_user.is_authenticated:
-        webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
+        if webhook_id.isdigit():
+            webhook = WebhookConnect.query.filter_by(ID=int(webhook_id)).first()
+        if webhook is None:
+            webhook = WebhookConnect.query.filter_by(uniq_name=webhook_id).first()
         if webhook is None:
             flash(f'Webhook {webhook_id} not found!')
             return redirect(url_for('index'))
