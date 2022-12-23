@@ -92,7 +92,7 @@
             {{ webhook.time_connect|nice_datetime }}
         </td>
     </tr>
-    {% if webhook.active %}
+    {% if webhook|webhook_active %}
     <tr class="table-success">
     {% else %}
     <tr class="table-danger">

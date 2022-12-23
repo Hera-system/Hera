@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
     default_secret_url = 'https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret'
+    WEBHOOK_ACTIVE_TIMEOUT = 300
     WTF_CSRF_ENABLED = True
     DEBUG = os.getenv("DEBUG")
     ALERTA_URL = os.getenv("ALERTA_URL")

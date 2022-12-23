@@ -27,7 +27,7 @@
     </thead>
     <tbody>
     {% for webhook in webhooks %}
-        {% if webhook.active %}
+        {% if webhook|webhook_active %}
             <tr class="table-success">
         {% else %}
             <tr class="table-danger">

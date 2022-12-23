@@ -405,6 +405,7 @@ class Healthcheck(Resource):
             return HealthcheckResult(
                 Status="OK.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="", HTTPSecret=""
             )
+        command_execution.TimeUpd = datetime.datetime.now()
         template = Templates.query.filter_by(ID=command_execution.TemplateID).first()
         if template is None:
             return HealthcheckResult(
