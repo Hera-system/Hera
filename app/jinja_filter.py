@@ -12,6 +12,7 @@ def nice_datetime(date):
     except:  # noqa: E722
         return date
 
+
 @app.template_filter()
 def webhook_active(webhook) -> bool:
     if not webhook.active:

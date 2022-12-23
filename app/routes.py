@@ -391,10 +391,39 @@ def update_info_webhook(body: InfoWebhook):
     return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
+
 class ConnectWebhook(Resource):
     @validate()
     def post(self, body: InfoWebhook):
-        return update_info_webhook(body)
+        resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
+        if not (resp_data is None):
+            if body.Token != app.config["SECRET_TOKEN"]:
+                return InfoReturnApi(error=True, message="Token not valid"), 401
+            resp_data.hostname = body.hostname
+            resp_data.username = body.username
+            resp_data.version = body.webhook_vers
+            resp_data.url = body.webhook_url
+            resp_data.uniq_name = body.webhook_uniq_name
+            resp_data.os_type = body.os_type
+            resp_data.os_arch = body.os_arch
+            resp_data.cpu_core = body.cpu_core
+            resp_data.connect_type = body.connect_type
+            resp_data.time_connect = datetime.datetime.now()
+            db.session.commit()
+            return InfoReturnApi(error=False, message="Webhook successful connected. Information updated.")
+        connect = WebhookConnect(hostname=body.hostname,
+                                 username=body.username,
+                                 version=body.webhook_vers,
+                                 url=body.webhook_url,
+                                 os_type=body.os_type,
+                                 os_arch=body.os_arch,
+                                 cpu_core=body.cpu_core,
+                                 connect_type=body.connect_type,
+                                 uniq_name=body.webhook_uniq_name,
+                                 time_connect = datetime.datetime.now())
+        db.session.add(connect)
+        db.session.commit()
+        return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
 class Healthcheck(Resource):
@@ -402,7 +431,7 @@ class Healthcheck(Resource):
     def post(self, body: InfoWebhook):
         if body.connect_type != "reverse":
             return "Method not supported for current webhook type", 405
-        update_info_webhook(body)
+        ConnectWebhook.post(body)
         command_execution = CommandExecution.query.filter_by(WebhookName=body.webhook_uniq_name).filter_by(TimeUpd=None).first()  # noqa: E501
         if command_execution is None:
             return HealthcheckResult(
