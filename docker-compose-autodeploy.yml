@@ -1,6 +1,11 @@
 ---
 version: '3.8'
 
+networks:
+  net:
+    external: true
+    name: main_net
+
 services:
   site:
     image: hera-system:local
