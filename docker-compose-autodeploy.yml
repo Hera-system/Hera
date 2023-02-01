@@ -1,4 +1,5 @@
-version: '3.1'
+---
+version: '3.8'
 
 services:
   site:
@@ -14,28 +15,38 @@ services:
       - ADMIN_PASSWORD=password
       - FLASK_DEBUG=1
       - DEBUG=True
-    ports:
-      - 9997:9997
     restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.hera-system.loadbalancer.server.port=9997
+      - traefik.http.routers.hera-system.rule=Host(`hera-system.oldtyt.xyz`)
+      - traefik.http.routers.hera-system.service=hera-system
+      - traefik.http.routers.hera-system.entryPoints=http
+    networks:
+      - net
 
   db:
     image: postgres
-    ports:
-      - 5432
     environment:
       POSTGRES_DB: hera
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     restart: always
+    networks:
+      - net
 
   webhook-direct:
     depends_on:
       - site
     image: hera-webhook-direct:local
     restart: always
+    networks:
+      - net
 
   webhook-reverse:
     depends_on:
       - site
     image: hera-webhook-reverse:local
     restart: always
+    networks:
+      - net
