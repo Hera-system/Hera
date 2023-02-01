@@ -10,9 +10,9 @@ services:
   site:
     image: hera-system:local
     depends_on:
-      - db
+      - hera-db
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/hera
+      - DATABASE_URL=postgres://postgres:postgres@hera-db:5432/hera
       - ALERTA_URL=https://alerta.io/auth/login
       - CURRENT_ENV=development
       - PORT=9997
@@ -30,7 +30,7 @@ services:
     networks:
       - net
 
-  db:
+  hera-db:
     image: postgres
     environment:
       POSTGRES_DB: hera

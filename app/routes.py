@@ -361,6 +361,7 @@ class ResultApi(Resource):
         db.session.commit()
         return InfoReturnApi(error=False, message="Success. The result is received.")
 
+
 def update_info_webhook(body: InfoWebhook):
     resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
     if not (resp_data is None):
@@ -391,7 +392,6 @@ def update_info_webhook(body: InfoWebhook):
     return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
 
 
-
 class ConnectWebhook(Resource):
     @validate()
     def post(self, body: InfoWebhook):
@@ -420,7 +420,7 @@ class ConnectWebhook(Resource):
                                  cpu_core=body.cpu_core,
                                  connect_type=body.connect_type,
                                  uniq_name=body.webhook_uniq_name,
-                                 time_connect = datetime.datetime.now())
+                                 time_connect=datetime.datetime.now())
         db.session.add(connect)
         db.session.commit()
         return InfoReturnApi(error=False, message="Webhook successful connected. Information created.")
