@@ -4,10 +4,14 @@ ARG TYPE=direct
 
 ENV TYPE=$TYPE
 
-RUN apk --no-cache add git binutils && git clone https://github.com/Hera-system/webhook.git && cd webhook && go build . && strip webhook
+RUN apk --no-cache add git binutils && \
+    git clone https://github.com/Hera-system/webhook.git && \
+    cd webhook && \
+    go build . && \
+    strip webhook
 
 FROM alpine:3.17.0
 COPY --from=builder /go/webhook/webhook /webhook
-COPY --from=builder /go/webhook/hera-reverse.config.json /hera-reverse.config.json
+COPY --from=builder /go/webhook/hera-*.config.json /hera-*.config.json
 
 ENTRYPOINT /webhook --config=hera-$TYPE.config.json
