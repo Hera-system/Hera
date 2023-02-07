@@ -12,6 +12,7 @@ RUN apk --no-cache add git binutils && \
 
 FROM alpine:3.17.0
 COPY --from=builder /go/webhook/webhook /webhook
-COPY --from=builder /go/webhook/hera-*.config.json /hera-*.config.json
+COPY --from=builder /go/webhook/hera-reverse.config.json /hera-reverse.config.json
+COPY --from=builder /go/webhook/hera-direct.config.json /hera-direct.config.json
 
 ENTRYPOINT /webhook --config=hera-$TYPE.config.json
