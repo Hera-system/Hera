@@ -1,23 +1,34 @@
-FROM python:3.10-alpine
+FROM python:3.10.9-alpine3.17 AS builder
 
-ARG ALERTA_URL=https://alerta.io/auth/login
-ARG CURRENT_ENV=production
-ARG PORT=9999
-ARG DATABASE_URL=sqlite
-ARG SECRET_URL=https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret
-ARG SECRET_TOKEN=VeryStrongString
-ARG HTTPUser=User
-ARG HTTPassword=Password
-ARG ADMIN_USERNAME=admin
-ARG ADMIN_PASSWORD=password
-ARG SECRET_KEY=you-will-never-guess
-ARG FLASK_DEBUG=0
-ARG DEBUG=False
+COPY . .
 
-EXPOSE $PORT
+RUN apk add --no-cache gcc g++ musl-dev git && \
+    pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt && \
+    git rev-parse --short HEAD > revision.txt
+
+FROM python:3.10.9-alpine3.17
+
+WORKDIR /app
+COPY . .
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /revision.txt revision.txt
+
+ARG ALERTA_URL=https://alerta.io/auth/login \
+    CURRENT_ENV=production \
+    PORT=9999 \
+    DATABASE_URL=sqlite \
+    SECRET_URL=https://raw.githubusercontent.com/Hera-system/HTTPSecret/main/HTTPSecret \
+    SECRET_TOKEN=VeryStrongString \
+    HTTPUser=User \
+    HTTPassword=Password \
+    ADMIN_USERNAME=admin \
+    ADMIN_PASSWORD=password \
+    SECRET_KEY=you-will-never-guess \
+    FLASK_DEBUG=1 \
+    DEBUG=True
 
 ENV ALERTA_URL=$ALERTA_URL\
-    PATH="/home/hera/.local/bin:${PATH}" \
+    PATH="/root/.local/bin:${PATH}" \
     FLASK_DEBUG=$FLASK_DEBUG \
     DEBUG=$DEBUG \
     FLASK_APP=app \
@@ -32,20 +43,9 @@ ENV ALERTA_URL=$ALERTA_URL\
     ADMIN_PASSWORD=$ADMIN_PASSWORD \
     SECRET_KEY=$SECRET_KEY
 
+EXPOSE $PORT
 
-WORKDIR /app
-
-RUN adduser --disabled-password hera && \
-    chown -R hera:hera /app && \
-    apk --no-cache add gcc g++ musl-dev curl git
-
-
-COPY --chown=hera:hera . .
-
-USER hera
-
-RUN pip install -r requirements.txt
+RUN pip install --no-cache /wheels/*
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD nc -z 127.0.0.1 $PORT
-
-ENTRYPOINT python3 db_create.py && gunicorn -b 0.0.0.0:$PORT 'wsgi:app'
+ENTRYPOINT python3 db_create.py || python3 db_migrate.py && flask run --host=0.0.0.0 --port=$PORT

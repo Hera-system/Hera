@@ -43,7 +43,9 @@ services:
   webhook-direct:
     depends_on:
       - site
-    image: hera-webhook-direct:local
+    image: hera-webhook:local
+    environment:
+      TYPE: "direct"
     restart: always
     networks:
       - net
@@ -51,7 +53,9 @@ services:
   webhook-reverse:
     depends_on:
       - site
-    image: hera-webhook-reverse:local
+    image: hera-webhook:local
+    environment:
+      TYPE: "reverse"
     restart: always
     networks:
       - net
