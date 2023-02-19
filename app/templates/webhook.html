@@ -132,12 +132,12 @@
             <tr class="table-success">
         {% endif %}
             <td>
-                <a href="{{ url_for('command', template_id=command.RowID) }}">
+                <a href="{{ url_for('main.command', template_id=command.RowID) }}">
                     {{ command.RowID }}
                 </a>
             </td>
             <td>
-                <a href="{{ url_for('template', template_id=command.TemplateID) }}">
+                <a href="{{ url_for('main.template', template_id=command.TemplateID) }}">
                     {{ command.TemplateID }}
                 </a>
             </td>
@@ -145,7 +145,7 @@
                     {{ command.TimeUpd|nice_datetime }}
             </td>
             <td>
-                <a class="btn btn-light btn-sm w-50" href="{{ url_for('command', template_id=command.RowID) }}">
+                <a class="btn btn-light btn-sm w-50" href="{{ url_for('main.command', template_id=command.RowID) }}">
                     View
                 </a>
             </td>

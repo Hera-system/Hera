@@ -33,7 +33,7 @@
             <tr class="table-danger">
         {% endif %}
         <th scope="row">
-            <a href="{{ url_for('webhook_info', webhook_id=webhook.ID) }}">
+            <a href="{{ url_for('main.webhook_info', webhook_id=webhook.ID) }}">
                 {{ webhook.ID }}
             </a>
         </th>
@@ -50,7 +50,7 @@
             {{ webhook.connect_type }}
         </td>
         <td>
-            <a class="btn btn-light btn-sm w-50" href="{{ url_for('exec_command_by_id', webhook_id=webhook.ID) }}">
+            <a class="btn btn-light btn-sm w-50" href="{{ url_for('main.exec_command_by_id', webhook_id=webhook.ID) }}">
                 Run
             </a>
         </td>

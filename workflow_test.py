@@ -1,5 +1,5 @@
-from app import *  # noqa: F403
+from app import create_app
 
 if __name__ == "__main__":
-    print(app)  # noqa: F405
-    print(app.config)  # noqa: F405
+    app = create_app()
+    print(app)

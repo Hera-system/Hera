@@ -24,8 +24,8 @@ def create_app(config_class=Config):
     api.init_app(app)
     app.config.from_object(Config)
     from app import models  # noqa: F401,E402
-    from app.main import jinja_filter
-    from app.main import routes
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
     db.init_app(app)
     migrate.init_app(app, db)
     login.login_view = 'login'
