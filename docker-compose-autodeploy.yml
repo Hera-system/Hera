@@ -15,7 +15,7 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@hera-db:5432/hera
       - ALERTA_URL=https://alerta.io/auth/login
       - CURRENT_ENV=development
-      - PORT=9997
+      - PORT=5000
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=password
       - FLASK_DEBUG=1
@@ -23,7 +23,7 @@ services:
     restart: always
     labels:
       - traefik.enable=true
-      - traefik.http.services.hera-system.loadbalancer.server.port=9997
+      - traefik.http.services.hera-system.loadbalancer.server.port=5000
       - traefik.http.routers.hera-system.rule=Host(`hera-system.oldtyt.xyz`)
       - traefik.http.routers.hera-system.service=hera-system
       - traefik.http.routers.hera-system.entryPoints=http

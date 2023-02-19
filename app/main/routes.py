@@ -9,16 +9,17 @@ from datetime import timedelta
 
 from flask_login import login_user, current_user, login_required
 from flask import render_template, flash, redirect, url_for, \
-    send_from_directory, request
+    send_from_directory, request, current_app
 from flask_restful import Resource
 from flask_pydantic import validate
 from pydantic import ValidationError
 
 from app.models import CommandExecution, Templates, Users, WebhookConnect, InfoWebhook, InfoReturnApi, GettingResult, \
     ExecutionCommand, AlertaAuth, ResultWebhook, ArgsCommandExecution, HealthcheckResult
-from app import app, db, api
+from app import db, api
 from app.forms import TemplateAdded, TemplateTrusted, \
     AlertaLogin, TrustTemplate, ExecuteCommandWebhook  # , ExecuteCommand
+from app.main import bp
 
 api_v = "v1"
 
@@ -29,7 +30,7 @@ def confirm_template(template_id):
     if template_curr is None:
         flash("Template not found")
         return redirect(url_for(redirect_to, template_id=template_id))
-    if template_curr.UserCrt == current_user.email and template_curr.UserCrt != app.config['SU_USER']:
+    if template_curr.UserCrt == current_user.email and template_curr.UserCrt != current_app.config['SU_USER']:
         flash("User created template not permission to trusted this template")
         return redirect(url_for(redirect_to, template_id=template_id))
     if template_curr.Trusted:
@@ -44,8 +45,8 @@ def confirm_template(template_id):
 
 
 def send_exec_cmd(data_exec):
-    token = app.config["SECRET_TOKEN"]
-    url_secret = app.config["SECRET_URL"]
+    token = current_app.config["SECRET_TOKEN"]
+    url_secret = current_app.config["SECRET_URL"]
     cmd = CommandExecution(TemplateID=data_exec.TemplateID,
                            WebhookURL=data_exec.WebhookURL,
                            WebhookName=data_exec.WebhookName,
@@ -106,8 +107,8 @@ def get_git_revision_short_hash() -> str:
     return revision
 
 
-@app.route('/')
-@app.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     db.session.close()
     return render_template('index.html', git_revision=get_git_revision_short_hash())
@@ -122,14 +123,14 @@ def get_user(email):
     return user
 
 
-@app.route('/templates')
+@bp.route('/templates')
 @login_required
 def templates():
     if current_user.is_authenticated:
         page = request.args.get('page', default=1, type=int)
         templates_all = Templates.query.order_by(Templates.ID.desc()).paginate(
             page=page,
-            per_page=app.config['ITEMS_PER_PAGE'],
+            per_page=current_app.config['ITEMS_PER_PAGE'],
             error_out=True
         )
         return render_template(
@@ -144,14 +145,14 @@ def templates():
     return redirect(url_for('login'))
 
 
-@app.route('/commands')
+@bp.route('/commands')
 @login_required
 def commands():
     if current_user.is_authenticated:
         page = request.args.get('page', default=1, type=int)
         command_exec = CommandExecution.query.order_by(CommandExecution.RowID.desc()).paginate(
             page=page,
-            per_page=app.config['ITEMS_PER_PAGE'],
+            per_page=current_app.config['ITEMS_PER_PAGE'],
             error_out=True
         )
         return render_template(
@@ -165,7 +166,7 @@ def commands():
     return redirect(url_for('login'))
 
 
-@app.route('/command/<template_id>')
+@bp.route('/command/<template_id>')
 @login_required
 def command(template_id):
     if current_user.is_authenticated:
@@ -176,7 +177,7 @@ def command(template_id):
     return redirect(url_for('login'))
 
 
-@app.route('/template/<template_id>', methods=['GET', 'POST'])
+@bp.route('/template/<template_id>', methods=['GET', 'POST'])
 @login_required
 def template(template_id):
     if current_user.is_authenticated:
@@ -190,16 +191,16 @@ def template(template_id):
     return redirect(url_for('login'))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = AlertaLogin()
     if form.validate_on_submit():
-        if form.Email.data == app.config['SU_USER'] and form.Password.data == app.config['SU_PASS']:
+        if form.Email.data == current_app.config['SU_USER'] and form.Password.data == current_app.config['SU_PASS']:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
             flash("You are authorized in Hera system!")
             return redirect(url_for(request.args.get('next', default="webhooks", type=str)[1:]))
         auth = AlertaAuth(password=form.Password.data, username=form.Email.data)
-        request_auth = requests.post(app.config["ALERTA_URL"], json=auth.json())
+        request_auth = requests.post(current_app.config["ALERTA_URL"], json=auth.json())
         if request_auth.status_code == 200:
             login_user(get_user(form.Email.data), form.RememberMe.data, timedelta(days=1))
             flash("You are authorized in Hera system!")
@@ -207,7 +208,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/confirmTemplate', methods=['GET', 'POST'])
+@bp.route('/confirmTemplate', methods=['GET', 'POST'])
 @login_required
 def confirm_templates():
     if current_user.is_authenticated:
@@ -219,7 +220,7 @@ def confirm_templates():
     return redirect(url_for('login'))
 
 
-@app.route('/addTemplate', methods=['GET', 'POST'])
+@bp.route('/addTemplate', methods=['GET', 'POST'])
 @login_required
 def addTemplate():
     if current_user.is_authenticated:
@@ -238,19 +239,19 @@ def addTemplate():
     return redirect(url_for('login'))
 
 
-@app.route('/webhooks', methods=['GET', 'POST'])
+@bp.route('/webhooks', methods=['GET', 'POST'])
 @login_required
 def webhooks():
     if current_user.is_authenticated:
-        if not app.config['WEBHOOK']['AutoUpdate']:
+        if not current_app.config['WEBHOOK']['AutoUpdate']:
             x = threading.Thread(target=update_status_webhook, args=(30,))
             logging.info("Start webhook thread")
             x.start()
-            app.config['WEBHOOK']['AutoUpdate'] = True
+            current_app.config['WEBHOOK']['AutoUpdate'] = True
         page = request.args.get('page', default=1, type=int)
         webhooks_all = WebhookConnect.query.order_by(WebhookConnect.ID.desc()).paginate(
             page=page,
-            per_page=app.config['ITEMS_PER_PAGE'],
+            per_page=current_app.config['ITEMS_PER_PAGE'],
             error_out=True
         )
         return render_template(
@@ -264,7 +265,7 @@ def webhooks():
     return redirect(url_for('login'))
 
 
-@app.route('/webhook/<webhook_id>')
+@bp.route('/webhook/<webhook_id>')
 @login_required
 def webhook_info(webhook_id):
     if current_user.is_authenticated:
@@ -280,7 +281,7 @@ def webhook_info(webhook_id):
         command_all = CommandExecution.query.filter_by(WebhookName=webhook.uniq_name).\
             order_by(CommandExecution.RowID.desc()).paginate(
             page=page,
-            per_page=app.config['ITEMS_PER_PAGE'],
+            per_page=current_app.config['ITEMS_PER_PAGE'],
             error_out=True
         )
         return render_template(
@@ -295,7 +296,7 @@ def webhook_info(webhook_id):
     return redirect(url_for('login'))
 
 
-@app.route('/execCmd/<webhook_id>', methods=['GET', 'POST'])
+@bp.route('/execCmd/<webhook_id>', methods=['GET', 'POST'])
 @login_required
 def exec_command_by_id(webhook_id):
     if current_user.is_authenticated:
@@ -313,7 +314,7 @@ def exec_command_by_id(webhook_id):
         if form.validate_on_submit():
             template_exec = Templates.query.filter_by(ID=form.TemplateID.data).first()
             if not (template_exec is None):
-                if template_exec.Trusted or current_user.email == app.config['SU_USER']:
+                if template_exec.Trusted or current_user.email == current_app.config['SU_USER']:
                     cmd = ArgsCommandExecution(
                                             TemplateID=form.TemplateID.data,
                                             WebhookURL=webhook_url+'/execute',
@@ -337,9 +338,9 @@ def exec_command_by_id(webhook_id):
     return redirect(url_for('login'))
 
 
-@app.route('/favicon.ico')
+@bp.route('/favicon.ico')
 def favicon():
-    return send_from_directory('static/', 'image/favicons/favicon.ico')
+    return send_from_directory('../static/', 'image/favicons/favicon.ico')
 
 
 class ResultApi(Resource):
@@ -365,7 +366,7 @@ class ResultApi(Resource):
 def update_info_webhook(body: InfoWebhook):
     resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
     if not (resp_data is None):
-        if body.Token != app.config["SECRET_TOKEN"]:
+        if body.Token != current_app.config["SECRET_TOKEN"]:
             return InfoReturnApi(error=True, message="Token not valid"), 401
         resp_data.hostname = body.hostname
         resp_data.username = body.username
@@ -397,7 +398,7 @@ class ConnectWebhook(Resource):
     def post(self, body: InfoWebhook):
         resp_data = WebhookConnect.query.filter_by(uniq_name=body.webhook_uniq_name).first()
         if not (resp_data is None):
-            if body.Token != app.config["SECRET_TOKEN"]:
+            if body.Token != current_app.config["SECRET_TOKEN"]:
                 return InfoReturnApi(error=True, message="Token not valid"), 401
             resp_data.hostname = body.hostname
             resp_data.username = body.username
@@ -443,11 +444,11 @@ class Healthcheck(Resource):
             return HealthcheckResult(
                 Status="Template not found.", ExecCommand="", Interpreter="", Token="", TimeExec=0, ID="", HTTPSecret=""
             )
-        request_secret = requests.get(app.config["SECRET_URL"], timeout=2)
+        request_secret = requests.get(current_app.config["SECRET_URL"], timeout=2)
         if request_secret.status_code == 200:
             return HealthcheckResult(
                 Status="Queued.", ExecCommand=template.Command, Interpreter=template.Interpreter,
-                Token=app.config["SECRET_TOKEN"], TimeExec=template.TimeExec, ID=command_execution.CmdID,
+                Token=current_app.config["SECRET_TOKEN"], TimeExec=template.TimeExec, ID=command_execution.CmdID,
                 HTTPSecret=request_secret.text
                 )
         return HealthcheckResult(
@@ -467,7 +468,7 @@ api.add_resource(Healthcheck, f'/api/{api_v}/healthcheck')
 api.add_resource(InfoApi, f'/api/{api_v}/info')
 
 
-@app.errorhandler(404)
+@bp.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
 
@@ -494,7 +495,3 @@ def update_status_webhook(sleep_time):
                     db.session.commit()
                     logging.error(f"Error update state webhook - {webhook.uniq_name}")
             time.sleep(sleep_time)
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')

@@ -6,20 +6,27 @@ from flask_restful import Api
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
 
-app = Flask(__name__)
-bootstrap = Bootstrap5(app)
-login = LoginManager(app)
-login.login_message = "Please logging to view this page."
-api = Api(app)
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-from app import routes, models, jinja_filter  # noqa: F401,E402
-migrate = Migrate(app, db)
-login.login_view = 'login'
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
+login.login_view = 'auth.login'
+login.login_message = 'Please logging to view this page.'
+bootstrap = Bootstrap5()
+api = Api()
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    app.config.from_object(config_class)
+    bootstrap.init_app(app)
+    login.init_app(app)
+    login.login_message = "Please logging to view this page."
+    api.init_app(app)
     app.config.from_object(Config)
+    from app import models  # noqa: F401,E402
+    from app.main import jinja_filter
+    from app.main import routes
     db.init_app(app)
+    migrate.init_app(app, db)
+    login.login_view = 'login'
     return app

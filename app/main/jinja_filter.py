@@ -1,9 +1,11 @@
 import datetime
 
-from app import app
+from flask import current_app
+
+from app.main import bp
 
 
-@app.template_filter()
+@bp.app_template_filter()
 def nice_datetime(date):
     if date is None:
         return date
@@ -13,10 +15,10 @@ def nice_datetime(date):
         return date
 
 
-@app.template_filter()
+@bp.app_template_filter()
 def webhook_active(webhook) -> bool:
     if not webhook.active:
         return False
-    if (datetime.datetime.now() - webhook.time_connect).total_seconds() > app.config['WEBHOOK_ACTIVE_TIMEOUT']:
+    if (datetime.datetime.now() - webhook.time_connect).total_seconds() > current_app.config['WEBHOOK_ACTIVE_TIMEOUT']:
         return False
     return True
