@@ -262,7 +262,7 @@ def webhooks():
             pages=webhooks_all.pages
         )
     flash("You are not authorized")
-    return redirect(url_for('login'))
+    return redirect(url_for('main.login'))
 
 
 @bp.route('/webhook/<webhook_id>')
