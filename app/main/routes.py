@@ -475,7 +475,7 @@ def not_found_error(error):
 
 def update_status_webhook(sleep_time):
     while True:
-        with app.app_context():
+        with current_app.app_context():
             webhooks = WebhookConnect.query.filter_by(connect_type="direct")
             for webhook in webhooks:
                 try:
