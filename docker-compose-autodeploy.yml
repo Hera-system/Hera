@@ -1,10 +1,10 @@
 ---
-version: '3.8'
+version: '3.9'
 
 networks:
   net:
     external: true
-    name: main_net
+    name: swarm_net
 
 services:
   site:
