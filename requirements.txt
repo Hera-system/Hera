@@ -12,7 +12,7 @@ itsdangerous==2.1.2
 Jinja2==3.1.2
 Mako==1.2.4
 MarkupSafe==2.1.2
-pytz==2022.7.1
+pytz==2023.2
 six==1.16.0
 SQLAlchemy==2.0.7
 Werkzeug==2.2.3
